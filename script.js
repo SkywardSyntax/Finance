@@ -14,8 +14,8 @@ const defaultTags = ['Food', 'Rent', 'Utilities', 'Transportation', 'Entertainme
 // Function to save the layout of an element to localStorage
 function saveLayout(elementId) {
   const element = document.getElementById(elementId);
-  const containerRect = container.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect(); 
+  const elementRect = element.getBoundingClientRect(); 
 
   const position = {
     x: elementRect.left - containerRect.left,
@@ -121,7 +121,7 @@ function snapToGrid(card, otherCard) {
     otherCard.style.top = (parseFloat(otherCard.style.top) - gap) + 'px'; 
   } else {
     card.style.top = (rect2.bottom + gap) + 'px';
-    otherCard.style.top = (parseFloat(otherCard.style.top) + gap) + 'px';
+    otherCard.style.top = (parseFloat(otherCard.style.top) + gap) + 'px'; 
   }
 }
 
@@ -141,7 +141,7 @@ function makeDraggable(elementId) {
         isDragging = true;
         card.style.cursor = 'grabbing';
         card.classList.add('dragging');
-      }, 1000); 
+      }, 1000);
     }
   });
 
@@ -201,33 +201,38 @@ function makeDraggable(elementId) {
 
 // Function to add a tag to a budget item
 function addTagToItem(budgetItem, tagText) {
-    const tagElement = document.createElement('span');
-    tagElement.classList.add('tag');
-    tagElement.textContent = tagText;
+  const tagElement = document.createElement('span');
+  tagElement.classList.add('tag');
+  tagElement.textContent = tagText;
 
-    const tagsContainer = budgetItem.querySelector('.tags');
-    tagsContainer.appendChild(tagElement);
+  // Remove tag on click
+  tagElement.addEventListener('click', () => {
+    tagElement.remove();
+  });
+
+  const tagsContainer = budgetItem.querySelector('.tags');
+  tagsContainer.appendChild(tagElement);
 }
 
 // Function to show/hide the tag selection interface
 function toggleTagSelection(budgetItem) {
-    const tagsContainer = budgetItem.querySelector('.tags');
-    const tagSelection = document.createElement('div'); 
-    tagSelection.classList.add('tag-selection');
+  const tagsContainer = budgetItem.querySelector('.tags');
+  const tagSelection = document.createElement('div');
+  tagSelection.classList.add('tag-selection');
 
-    defaultTags.forEach(tag => {
-        const tagButton = document.createElement('button');
-        tagButton.textContent = tag;
-        tagButton.addEventListener('click', () => {
-            addTagToItem(budgetItem, tag);
-            tagSelection.remove(); // Remove the selection interface
-        });
-        tagSelection.appendChild(tagButton);
+  defaultTags.forEach(tag => {
+    const tagButton = document.createElement('button');
+    tagButton.textContent = tag;
+    tagButton.addEventListener('click', () => {
+      addTagToItem(budgetItem, tag);
+      tagSelection.remove(); 
     });
+    tagSelection.appendChild(tagButton);
+  });
 
-    tagsContainer.appendChild(tagSelection);
+  tagsContainer.appendChild(tagSelection);
 
-    tagSelection.classList.toggle('show'); // Toggle visibility
+  tagSelection.classList.toggle('show'); 
 }
 
 // Load layout on page load and initialize positions
@@ -265,8 +270,8 @@ addItemButton.addEventListener('click', () => {
     budgetItem.classList.add('budget-item');
     budgetItem.innerHTML = `
       <div class="budget-item-info">
-          <span class="name">${itemName}</span>
-          <span class="amount">$${itemAmount.toFixed(2)}</span>
+        <span class="name">${itemName}</span>
+        <span class="amount">$${itemAmount.toFixed(2)}</span>
       </div>
       <div class="tags"></div>
       <button class="add-tags-button">Add Tags</button>
@@ -287,7 +292,7 @@ addItemButton.addEventListener('click', () => {
     // Add tags button functionality
     const addTagsButton = budgetItem.querySelector('.add-tags-button');
     addTagsButton.addEventListener('click', () => {
-        toggleTagSelection(budgetItem);
+      toggleTagSelection(budgetItem);
     });
 
     updateBudgetRing();
@@ -296,19 +301,30 @@ addItemButton.addEventListener('click', () => {
 
 // Update Budget Ring Function
 function updateBudgetRing() {
-    const remainingAmount = totalIncome - budgetedAmount;
-    const percentage = (remainingAmount / totalIncome) * 100;
-    const deg = (percentage / 100) * 360;
+  const remainingAmount = totalIncome - budgetedAmount;
+  const percentage = (remainingAmount / totalIncome) * 100 || 100; 
+  const deg = (percentage / 100) * 360;
 
-    budgetRing.style.setProperty('--progress-deg', `${deg}deg`);
-    budgetAmountText.textContent = `$${remainingAmount.toFixed(2)}`;
+  // Update the ring's progress bar
+  budgetRing.style.setProperty('--progress-deg', `${deg}deg`);
 
-    // Adjust font size to fit
-    if (remainingAmount.toString().length > 8) {
-        budgetAmountText.style.fontSize = "1.5rem";
-    } else if (remainingAmount.toString().length > 6) {
-        budgetAmountText.style.fontSize = "2rem";
-    } else {
-        budgetAmountText.style.fontSize = "2.5rem";
-    }
+  budgetAmountText.textContent = `$${remainingAmount.toFixed(2)}`;
+
+  // Dynamically set the border color based on the percentage
+  if (percentage <= 10) {
+    budgetRing.style.backgroundImage = `conic-gradient(red 0deg, red ${deg}deg, transparent ${deg}deg, transparent 360deg)`;
+  } else if (percentage <= 50) {
+    budgetRing.style.backgroundImage = `conic-gradient(yellow 0deg, yellow ${deg}deg, transparent ${deg}deg, transparent 360deg)`;
+  } else {
+    budgetRing.style.backgroundImage = `conic-gradient(green 0deg, green ${deg}deg, transparent ${deg}deg, transparent 360deg)`;
+  }
+
+  // Adjust font size to fit
+  if (remainingAmount.toString().length > 8) {
+    budgetAmountText.style.fontSize = "1.5rem";
+  } else if (remainingAmount.toString().length > 6) {
+    budgetAmountText.style.fontSize = "2rem";
+  } else {
+    budgetAmountText.style.fontSize = "2.5rem";
+  }
 }
