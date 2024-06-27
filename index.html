@@ -3,12 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance Project</title>
+    <title>Personal Finance Tracker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Welcome to the Finance Project</h1>
-    <p>This is a basic setup of an HTML, CSS, and JavaScript project.</p>
+    <div class="container" id="container">
+        <div class="budget-card" id="budget-card">
+            <div class="ring-container">
+                <div class="budget-info">
+                    <div class="budget-amount" id="budget-amount">$0.00</div>
+                    <div class="income-info">
+                        <span class="label">Income:</span>
+                        <span class="value" id="income-value">$0.00</span>
+                    </div>
+                    <div class="label">Remaining Budget</div>
+                </div>
+                <div class="budget-ring">
+                    <div class="budget-ring-fill" id="budget-ring-fill">
+                        <div class="inner-circle"></div> 
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="input-card" id="input-card">
+            <div class="input-content">
+                <h2>Enter Your Annual Income</h2>
+                <input type="number" id="annual-income" placeholder="E.g., 50000">
+            </div>
+            <button id="set-income">Set Income</button>
+        </div>
+
+        <div class="budget-card" id="budget-items-card">
+            <h2>Create Your Budget</h2>
+            <div class="budget-items" id="budget-items-container"></div>
+            <button id="add-item">Add Budget Item</button>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

@@ -1,18 +1,222 @@
-/* Basic styles for the Finance Project */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #121212;
+    color: #eee;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    min-height: 100vh;
     margin: 0;
-    padding: 20px;
+    padding: 30px;
 }
 
-h1 {
-    color: #007bff;
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
 }
 
-p {
-    font-size: 16px;
+.budget-card, .input-card {
+    background-color: #202020;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
 }
 
-/* Demonstrating the link from index.html */
+/* More subtle wiggle animation */
+.dragging {
+    animation: wiggle 0.15s infinite linear; 
+}
+
+@keyframes wiggle {
+    0% { transform: translate(0, 0); } 
+    25% { transform: translate(2px, 0); }
+    50% { transform: translate(0, 0); }
+    75% { transform: translate(-2px, 0); } 
+    100% { transform: translate(0, 0); }
+}
+
+/* Ring Container */
+.ring-container {
+    display: flex;
+    align-items: center;
+    width: 100%; 
+}
+
+/* Budget Ring */
+.budget-ring {
+    width: 130px; 
+    height: 130px; 
+    border-radius: 50%;
+    background-color: #ccc;
+    position: relative;
+    overflow: hidden;
+    margin-left: 20px; 
+}
+
+/* Budget Ring Fill */
+.budget-ring-fill {
+    width: 90%;
+    height: 90%;
+    border-radius: 50%;
+    background-color: #ccc;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Inner Circle (Animation) */
+.inner-circle {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    background-color: #f0ad4e; 
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Budget Ring Progress (Green Border) */
+.budget-ring::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-image:
+        conic-gradient(
+            green 0deg,
+            green var(--progress-deg, 360deg),
+            transparent var(--progress-deg, 360deg),
+            transparent 360deg
+        );
+    transition: --progress-deg 0.3s ease-in-out;
+    z-index: 1; 
+}
+
+/* Budget Info */
+.budget-info {
+    text-align: right;
+}
+
+/* Budget Amount */
+.budget-amount {
+    font-size: 2.5rem; 
+    font-weight: bold;
+    color: white;
+    white-space: nowrap; 
+    margin-bottom: 10px; 
+}
+
+/* Income Info */
+.income-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px; 
+}
+
+/* Labels */
+.label {
+    font-size: 0.9rem;
+    color: #ddd;
+    font-weight: bold;
+}
+
+/* Values */
+.value {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Headings */
+h2 {
+    color: #eee;
+    margin-bottom: 10px; 
+}
+
+/* Input Card Content */
+.input-content {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 15px;
+}
+
+/* Input Field */
+input[type="number"] {
+    width: 180px; 
+    padding: 8px; 
+    border-radius: 5px; 
+    border: 1px solid #555; 
+    background-color: #444; 
+    color: #eee; 
+}
+
+/* Buttons */
+button {
+    background-color: #5cb85c; 
+    color: white;
+    padding: 10px 15px; 
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer; 
+    transition: background-color 0.2s; 
+}
+
+button:hover {
+    background-color: #4cae4c; 
+}
+
+/* Budget Items */
+.budget-items {
+    margin-bottom: 15px;
+}
+
+/* Individual Budget Item */
+.budget-items .budget-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px; 
+}
+
+/* Budget Item Text */
+.budget-items span {
+    font-size: 0.9rem; 
+}
+
+/* Delete Button */
+.delete-item {
+    background-color: #d9534f; 
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s;
+}
+
+/* Delete Button Hover */
+.delete-item:hover {
+    background-color: #c9302c;
+}
+
+/* Pulse Animation */
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+    }
+    50% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0.95);
+    }
+}
