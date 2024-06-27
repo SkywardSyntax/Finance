@@ -11,45 +11,54 @@ const timePeriodChip = document.getElementById('time-period-chip');
 const incomeLabel = document.getElementById('income-label');
 const categoryNameInput = document.getElementById('category-name');
 const categoryAmountInput = document.getElementById('category-amount');
-const categoryTagSelection = document.getElementById('category-tag-selection');
+const categorySelection = document.getElementById('category-selection');
+const customCategoryField = document.getElementById('custom-category-field');
 
 let totalIncome = 0;
 let budgetedAmount = 0;
-let isMonthly = true; // Start with monthly view
+let isMonthly = true;
 const defaultTags = ['Food', 'Rent', 'Utilities', 'Transportation', 'Entertainment', 'Education', 'Shopping', 'Travel', 'Other'];
-const budgetCategories = {}; 
+const budgetCategories = {};
 
-// Function to save the layout of an element to localStorage
-function saveLayout(elementId) {
-  const element = document.getElementById(elementId);
-  const containerRect = container.getBoundingClientRect();
-  const elementRect = element.getBoundingClientRect();
+// Function to save the layout of all elements to localStorage
+function saveLayout() {
+  const elementsToSave = ['budget-card', 'input-card', 'add-category-card', 'time-period-chip'];
 
-  const position = {
-    x: elementRect.left - containerRect.left,
-    y: elementRect.top - containerRect.top
-  };
+  elementsToSave.forEach(elementId => {
+    const element = document.getElementById(elementId);
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
 
-  localStorage.setItem(elementId + '-position', JSON.stringify(position));
+    const position = {
+      x: elementRect.left - containerRect.left,
+      y: elementRect.top - containerRect.top
+    };
+
+    localStorage.setItem(elementId + '-position', JSON.stringify(position));
+  });
 }
 
-// Function to load the layout of an element from localStorage
-function loadLayout(elementId) {
-  const savedPosition = localStorage.getItem(elementId + '-position');
-  if (savedPosition) {
-    const position = JSON.parse(savedPosition);
-    const element = document.getElementById(elementId);
-    element.style.left = position.x + 'px';
-    element.style.top = position.y + 'px';
-  }
+// Function to load the layout of all elements from localStorage
+function loadLayout() {
+  const elementsToLoad = ['budget-card', 'input-card', 'add-category-card', 'time-period-chip'];
+
+  elementsToLoad.forEach(elementId => {
+    const savedPosition = localStorage.getItem(elementId + '-position');
+    if (savedPosition) {
+      const position = JSON.parse(savedPosition);
+      const element = document.getElementById(elementId);
+      element.style.left = position.x + 'px';
+      element.style.top = position.y + 'px';
+    }
+  });
 }
 
 // Function to initialize the card position if not already set
-function initializeCardPosition(elementId) {
+function initializeCardPosition(elementId, defaultLeft, defaultTop) {
   const card = document.getElementById(elementId);
   if (!card.style.left || !card.style.top) {
-    card.style.left = '10px';
-    card.style.top = '10px';
+    card.style.left = defaultLeft;
+    card.style.top = defaultTop;
   }
 }
 
@@ -77,17 +86,17 @@ function getCollisionSide(rect1, rect2) {
       if (crossWidth > -crossHeight) {
         return "bottom"; 
       } else {
-        return "left";
+        return "left"; 
       }
     } else {
       if (crossWidth > -crossHeight) {
-        return "right";
+        return "right"; 
       } else {
-        return "top";
+        return "top"; 
       }
     }
   }
-  return null;
+  return null; 
 }
 
 // Function to move a card inertially based on collision side
@@ -140,7 +149,9 @@ function makeDraggable(elementId) {
   let offsetX, offsetY;
   let timeoutId;
 
+  // Add mousedown event to the card itself
   card.addEventListener('mousedown', (e) => {
+    // Only start dragging if the background (not a button) is clicked
     if (e.target === card) {
       offsetX = e.clientX - parseFloat(card.style.left || 0);
       offsetY = e.clientY - parseFloat(card.style.top || 0);
@@ -186,7 +197,7 @@ function makeDraggable(elementId) {
             moveInertially(other, collisionSide, 16);
 
             saveLayout(elementId);
-            saveLayout(other.id);
+            saveLayout(other.id); 
 
             return;
           }
@@ -232,7 +243,7 @@ function toggleTagSelection(parent, tagSelectionContainer) {
     tagButton.textContent = tag;
     tagButton.addEventListener('click', () => {
       addTagToItem(parent, tag);
-      tagSelection.remove();
+      tagSelection.remove(); 
     });
     tagSelection.appendChild(tagButton);
   });
@@ -241,37 +252,47 @@ function toggleTagSelection(parent, tagSelectionContainer) {
   tagSelection.classList.toggle('show');
 }
 
+// Function to create a category button
+function createCategoryButton(categoryName) {
+  const categoryButton = document.createElement('button');
+  categoryButton.textContent = categoryName;
+  categoryButton.addEventListener('click', () => {
+    categoryNameInput.value = categoryName;
+    customCategoryField.style.display = 'none'; 
+    if (categoryName === "Other") {
+      customCategoryField.style.display = 'block'; 
+    }
+  });
+  return categoryButton;
+}
 
 // Load layout on page load and initialize positions
-loadLayout('budget-card');
-loadLayout('input-card');
-loadLayout('add-category-card');
-loadLayout('time-period-chip'); // Load time period chip position
+loadLayout();
 
-// Initialize card positions if they haven't been loaded from localStorage
-initializeCardPosition('budget-card');
-initializeCardPosition('input-card');
-initializeCardPosition('add-category-card');
-initializeCardPosition('time-period-chip'); // Initialize time period chip position
+// Initialize card positions with default values if no saved layout
+initializeCardPosition('budget-card', '400px', '50px');
+initializeCardPosition('input-card', '50px', '200px');
+initializeCardPosition('add-category-card', '50px', '400px');
+initializeCardPosition('time-period-chip', '50%', '10px'); 
 
 // Make the cards draggable
 makeDraggable('budget-card');
 makeDraggable('input-card');
 makeDraggable('add-category-card');
-makeDraggable('time-period-chip'); // Make time period chip draggable
+makeDraggable('time-period-chip'); 
 
 // Set Income Button
 setIncomeButton.addEventListener('click', () => {
   totalIncome = parseFloat(annualIncomeInput.value) || 0;
   incomeValueSpan.textContent = `$${totalIncome.toFixed(2)}`;
   updateBudgetRing();
-  updateCategoryAmounts(); // Update category amounts after income change
+  updateCategoryAmounts(); 
 });
 
 // Add Category Button
 addCategoryButton.addEventListener('click', () => {
-  const categoryName = categoryNameInput.value; 
-  let categoryAmount = parseFloat(categoryAmountInput.value); 
+  const categoryName = categoryNameInput.value;
+  let categoryAmount = parseFloat(categoryAmountInput.value);
 
   if (categoryName && !isNaN(categoryAmount) && categoryAmount > 0) {
     if (isMonthly) {
@@ -298,20 +319,19 @@ addCategoryButton.addEventListener('click', () => {
     `;
     budgetCategoriesContainer.appendChild(categoryItem);
 
-    // Store category data
     budgetCategories[categoryItem.id] = {
       name: categoryName,
-      allocated: categoryAmount, 
+      allocated: categoryAmount,
       spent: 0,
       items: [],
     };
 
-    // Add initial category tag to the category
-    addTagToItem(categoryItem, categoryName);
+    addTagToItem(categoryItem, categoryName); 
 
-    // Add item to category functionality
     const addItemToCategoryButton = categoryItem.querySelector('.add-item-button');
-    addItemToCategoryButton.addEventListener('click', () => {
+    addItemToCategoryButton.addEventListener('click', (event) => {
+      event.stopPropagation();
+
       const categoryId = addItemToCategoryButton.dataset.category;
       const category = budgetCategories[categoryId];
 
@@ -319,8 +339,7 @@ addCategoryButton.addEventListener('click', () => {
       let itemAmount = parseFloat(prompt(`Enter item amount for ${category.name}:`));
 
       if (itemName && !isNaN(itemAmount) && itemAmount > 0) {
-        // Adjust item amount based on time period
-        if (!isMonthly) { 
+        if (!isMonthly) {
           itemAmount /= 12;
         }
 
@@ -337,8 +356,8 @@ addCategoryButton.addEventListener('click', () => {
         budgetItem.classList.add('budget-item');
         budgetItem.innerHTML = `
           <div class="budget-item-info">
-              <span class="name">${itemName}</span>
-              <span class="amount">$${(itemAmount * (isMonthly ? 1 : 12)).toFixed(2)}</span> 
+            <span class="name">${itemName}</span>
+            <span class="amount">$${(itemAmount * (isMonthly ? 1 : 12)).toFixed(2)}</span>
           </div>
           <div class="tags"></div>
           <button class="add-tags-button">Add Tags</button>
@@ -346,40 +365,35 @@ addCategoryButton.addEventListener('click', () => {
         `;
         categoryItemsContainer.appendChild(budgetItem);
 
-        // Add the category tag to the item
         addTagToItem(budgetItem, categoryName);
 
-        // Delete budget item functionality
         const deleteButton = budgetItem.querySelector('.delete-item');
         deleteButton.addEventListener('click', () => {
           const amountToDelete = parseFloat(deleteButton.dataset.amount);
           const categoryId = deleteButton.dataset.category;
           const category = budgetCategories[categoryId];
           category.spent -= amountToDelete;
-          category.items = category.items.filter(item => item.amount !== amountToDelete);
+          category.items = category.items.filter(item => item.amount !== amountToDelete); 
           budgetItem.remove();
-          updateCategoryAmount(categoryId);
-          updateBudgetRing();
+          updateCategoryAmount(categoryId); 
+          updateBudgetRing(); 
         });
 
-        // Add tags button functionality
         const addTagsButton = budgetItem.querySelector('.add-tags-button');
         addTagsButton.addEventListener('click', (event) => {
-          // Stop propagation to prevent dragging the parent category chip
-          event.stopPropagation(); 
-
+          event.stopPropagation();
           const tagSelectionContainer = budgetItem.querySelector('.tags'); 
           toggleTagSelection(budgetItem, tagSelectionContainer);
         });
 
         updateCategoryAmount(categoryId);
-        updateBudgetRing();
+        updateBudgetRing(); 
       }
     });
 
-    updateCategoryAmount(categoryItem.id); 
+    updateCategoryAmount(categoryItem.id);
     updateBudgetRing(); 
-    categoryNameInput.value = ''; 
+    categoryNameInput.value = '';
     categoryAmountInput.value = ''; 
   }
 });
@@ -389,17 +403,15 @@ function updateBudgetRing() {
   const remainingAmount = totalIncome - budgetedAmount;
   let percentage = (remainingAmount / totalIncome) * 100;
   if (isNaN(percentage)) {
-    percentage = 100;
+    percentage = 100; 
   }
   let deg = (percentage / 100) * 360;
-  deg = deg - 90; // Rotate to start from the top
+  deg = deg - 90; 
 
-  // Update the ring fill's rotation for depletion
   budgetRingFill.style.transform = `rotate(${deg}deg)`;
 
   budgetAmountText.textContent = `$${remainingAmount.toFixed(2)}`;
 
-  // Dynamically set the border color based on the percentage
   if (percentage <= 10) {
     budgetRingFill.style.backgroundColor = 'red';
   } else if (percentage <= 50) {
@@ -408,7 +420,6 @@ function updateBudgetRing() {
     budgetRingFill.style.backgroundColor = 'green';
   }
 
-  // Adjust font size to fit
   if (remainingAmount.toString().length > 8) {
     budgetAmountText.style.fontSize = "1.5rem";
   } else if (remainingAmount.toString().length > 6) {
@@ -423,12 +434,11 @@ function updateCategoryAmount(categoryId) {
   const category = budgetCategories[categoryId];
   const categoryAmountSpan = document.querySelector(`#${categoryId} .amount`);
 
-  // Display amount based on monthly/yearly view
   const displayAmount = isMonthly ? category.allocated / 12 : category.allocated;
-  categoryAmountSpan.textContent = `$${(displayAmount - category.spent * (isMonthly ? 1 : 12)).toFixed(2)}`; 
+  categoryAmountSpan.textContent = `$${(displayAmount - category.spent * (isMonthly ? 1 : 12)).toFixed(2)}`;
 }
 
-// Update all category amounts (used when time period changes)
+// Update all category amounts 
 function updateCategoryAmounts() {
   for (const categoryId in budgetCategories) {
     updateCategoryAmount(categoryId);
@@ -440,10 +450,17 @@ timePeriodChip.addEventListener('click', () => {
   isMonthly = !isMonthly; 
   timePeriodChip.querySelector('.label').textContent = isMonthly ? 'Monthly' : 'Yearly';
 
-  // Update income label
   incomeLabel.textContent = `Enter Your ${isMonthly ? 'Monthly' : 'Annual'} Income`;
 
-  // Update budget amount and category amounts
-  updateBudgetRing(); 
+  updateBudgetRing();
   updateCategoryAmounts();
 });
+
+// Populate Category Selection buttons
+defaultTags.forEach(tag => {
+  const button = createCategoryButton(tag);
+  categorySelection.appendChild(button);
+});
+
+// Add "Other" button for custom category
+categorySelection.appendChild(createCategoryButton("Other"));
