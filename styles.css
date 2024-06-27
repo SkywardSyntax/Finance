@@ -17,7 +17,7 @@ body {
     width: 100%;
 }
 
-.budget-card, .input-card {
+.budget-card, .input-card, .time-period-chip {
     background-color: #202020;
     border-radius: 15px;
     padding: 25px;
@@ -27,20 +27,34 @@ body {
 
 /* More subtle wiggle animation */
 .dragging {
-    animation: wiggle 0.15s infinite linear;
+    animation: wiggle 0.15s infinite linear; 
 }
 
 @keyframes wiggle {
-    0% { transform: translate(0, 0); }
+    0% { transform: translate(0, 0); } 
     25% { transform: translate(2px, 0); }
     50% { transform: translate(0, 0); }
-    75% { transform: translate(-2px, 0); }
+    75% { transform: translate(-2px, 0); } 
     100% { transform: translate(0, 0); }
 }
 
 .budget-card:active,
-.input-card:active {
+.input-card:active,
+.time-period-chip:active {
     background-color: #2a2a2a;
+}
+
+/* Time Period Chip */
+.time-period-chip {
+    padding: 10px 20px; /* Adjusted padding */
+    cursor: pointer;
+    display: flex;
+    justify-content: center; /* Center the text */
+    align-items: center;
+    user-select: none; /* Prevent text selection */
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
 }
 
 /* Ring Container */
@@ -55,7 +69,7 @@ body {
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    background-color: transparent; /* Transparent background */
+    background-color: transparent;
     position: relative;
     overflow: hidden;
     margin-left: 20px;
@@ -64,30 +78,38 @@ body {
 /* Budget Ring Fill - This will be the colored part */
 .budget-ring-fill {
     position: absolute;
-    top: 5%; 
+    top: 5%;
     left: 5%;
     width: 90%;
     height: 90%;
     border-radius: 50%;
-    background-color: green; 
-    z-index: 1; /* Put the fill below the pulse */
+    background-color: green;
+    z-index: 1;
     transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
     transform-origin: center;
     transform: rotate(-90deg); 
 }
 
-/* Inner Circle (Animation) */
-.inner-circle {
-    position: absolute; 
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); 
+/* Pulse Container (New element to hold the pulse) */
+.pulse-container { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Inner Circle (Pulse Animation) */
+.inner-circle { 
     width: 80%;
     height: 80%;
     border-radius: 50%;
     background-color: #f0ad4e;
     animation: pulse 1.5s infinite ease-in-out;
-    z-index: 2; /* Ensure the pulse is on top */
 }
 
 /* Pulse Animation */
@@ -97,10 +119,10 @@ body {
     100% { transform: scale(0.95); }
 }
 
-
 /* Budget Info */
 .budget-info {
     text-align: right;
+    margin-bottom: 20px; 
 }
 
 /* Budget Amount */
@@ -135,25 +157,26 @@ body {
 /* Headings */
 h2 {
     color: #eee;
-    margin-bottom: 10px;
+    margin-bottom: 15px; 
 }
 
 /* Input Card Content */
 .input-content {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    flex-direction: column; 
+    margin-bottom: 15px; 
 }
 
 /* Input Field */
-input[type="number"] {
-    width: 180px;
-    padding: 8px;
-    border-radius: 5px;
+input[type="number"], 
+input[type="text"] {
+    width: calc(100% - 16px);
+    padding: 8px; 
+    border-radius: 5px; 
     border: 1px solid #555;
     background-color: #444;
     color: #eee;
+    margin-bottom: 10px; 
 }
 
 /* Buttons */
@@ -161,11 +184,11 @@ button {
     background-color: #4CAF50; 
     border: none;
     color: white;
-    padding: 8px 16px; 
+    padding: 10px 20px; 
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px; 
+    font-size: 1rem; 
     border-radius: 8px; 
     transition: background-color 0.3s;
     cursor: pointer;
@@ -177,19 +200,21 @@ button:hover {
 
 .delete-item {
     background-color: #f44336;
+    padding: 6px 12px; 
+    font-size: 0.8rem; 
 }
 
 .delete-item:hover {
     background-color: #d32f2f; 
 }
 
-/* Budget Items Container */
-.budget-items {
-    margin-top: 20px; 
+/* Budget Categories Container */
+.budget-categories {
+    margin-top: 20px;
 }
 
-/* Budget Sub-Chip */
-.budget-item {
+/* Budget Category Sub-Chip */
+.budget-category {
     background-color: #333;
     border-radius: 8px;
     padding: 10px;
@@ -198,71 +223,122 @@ button:hover {
     flex-direction: column; 
 }
 
-/* Budget Item Info Container */
-.budget-item-info {
+/* Category Name & Amount */
+.category-info {
     display: flex;
     align-items: center;
-    justify-content: space-between; 
+    justify-content: space-between;
     margin-bottom: 5px;
 }
 
-/* Budget Item Name */
-.budget-item .name {
+.budget-category .name {
     font-size: 0.9rem;
     color: #eee;
 }
 
-/* Budget Item Amount */
-.budget-item .amount {
+.budget-category .amount {
     font-size: 0.8rem;
     color: #ccc;
 }
 
-/* Tag Container */
-.tags {
-    display: flex;
-    flex-wrap: wrap; 
-    gap: 5px; 
+/* Budget Items Container within Category */
+.category-items {
+    margin-top: 10px;
 }
 
-/* Individual Tag */
+/* Budget Item Sub-Chip */
+.budget-item {
+    background-color: #444; 
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+}
+
+.budget-item .name {
+    font-size: 0.8rem;
+    color: #eee;
+}
+
+.budget-item .amount {
+    font-size: 0.7rem;
+    color: #ccc;
+}
+
+/* Input field for adding items */
+.input-field {
+    margin-bottom: 10px;
+}
+
+/* Styling for tags */
 .tag {
-    background-color: #5bc0de; 
+    background-color: #5bc0de;
     color: white;
     padding: 3px 6px;
     border-radius: 5px;
     font-size: 0.7rem;
-    cursor: pointer; 
+    cursor: pointer;
+    margin-left: 8px; 
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 5px;
+}
+
+/* Add Item Button (within category) */
+.add-item-button {
+    background-color: #5cb85c;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    margin-top: 8px;
+    align-self: flex-end; 
+}
+
+.add-item-button:hover {
+    background-color: #4cae4c;
 }
 
 /* Tag Selection Interface */
 .tag-selection {
-    display: none; 
+    display: none;
     position: absolute;
     background-color: #202020;
     border-radius: 8px;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 3; 
+    margin-top: 5px;
 }
 
 .tag-selection.show {
-    display: block; 
+    display: block;
 }
 
 .tag-selection button {
     background-color: #5bc0de;
     color: white;
     border: none;
-    padding: 5px 10px; 
+    padding: 5px 10px;
     margin: 5px 0;
-    border-radius: 5px; 
+    border-radius: 5px;
     cursor: pointer;
     font-size: 0.8rem;
-    width: 100%;
-    transition: background-color 0.2s; 
+    width: calc(100% - 10px); 
+    transition: background-color 0.2s;
 }
 
 .tag-selection button:hover {
-    background-color: #46b8da; 
+    background-color: #46b8da;
 }
