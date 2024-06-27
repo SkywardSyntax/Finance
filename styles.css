@@ -179,38 +179,69 @@ button:hover {
     background-color: #4cae4c; 
 }
 
-/* Budget Items */
+/* Budget Items Container */
 .budget-items {
-    margin-bottom: 15px;
+    margin-top: 20px; 
 }
 
-/* Individual Budget Item */
-.budget-items .budget-item {
-    display: flex;
-    justify-content: space-between;
+/* Budget Sub-Chip */
+.budget-item {
+    background-color: #333; 
+    border-radius: 8px;
+    padding: 10px; 
     margin-bottom: 8px; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-/* Budget Item Text */
-.budget-items span {
+.budget-item-info { /* Container for name and amount */
+    display: flex;
+    flex-direction: column; 
+}
+
+/* Budget Item Name */
+.budget-item .name {
     font-size: 0.9rem; 
+    color: #eee;
+}
+
+/* Budget Item Amount */
+.budget-item .amount {
+    font-size: 0.8rem; 
+    color: #ccc;
+}
+
+/* Tag Container */
+.tags {
+    display: flex;
+    gap: 5px; 
+}
+
+/* Individual Tag */
+.tag {
+    background-color: #5bc0de; 
+    color: white;
+    padding: 3px 6px; 
+    border-radius: 5px; 
+    font-size: 0.7rem;
 }
 
 /* Delete Button */
-.delete-item {
+.delete-item { 
     background-color: #d9534f; 
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 5px 10px; 
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.8rem; 
     transition: background-color 0.2s;
 }
 
 /* Delete Button Hover */
 .delete-item:hover {
-    background-color: #c9302c;
+    background-color: #c9302c; 
 }
 
 /* Pulse Animation */
@@ -225,3 +256,35 @@ button:hover {
         transform: scale(0.95);
     }
 }
+
+.tag-selection {
+    display: none; /* Hidden by default */
+    position: absolute; 
+    background-color: #202020;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 3; /* Ensure it's on top */
+}
+
+.tag-selection.show {
+    display: block; /* Show when needed */
+}
+
+.tag-selection button {
+    background-color: #5bc0de;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    margin: 5px 0; 
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    width: 100%; /* Make buttons fill width */
+    transition: background-color 0.2s;
+}
+
+.tag-selection button:hover {
+    background-color: #46b8da;
+}
+
