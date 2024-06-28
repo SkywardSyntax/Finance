@@ -38,23 +38,34 @@ body {
     100% { transform: translate(0, 0); }
 }
 
-.budget-card:active,
-.input-card:active,
-.time-period-chip:active {
+/* Make only the draggable-area active */
+.draggable-area:active {
     background-color: #2a2a2a;
 }
 
 /* Time Period Chip */
 .time-period-chip {
-    padding: 10px 20px; /* Adjusted padding */
+    padding: 10px 20px; 
     cursor: pointer;
     display: flex;
-    justify-content: center; /* Center the text */
+    justify-content: center;
     align-items: center;
-    user-select: none; /* Prevent text selection */
+    user-select: none; 
     top: 10px;
     left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
+    transform: translateX(-50%);
+}
+
+/* Draggable Area (common to all chips) */
+.draggable-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    border-radius: 15px;
+    cursor: grab;
 }
 
 /* Ring Container */
@@ -69,7 +80,7 @@ body {
     width: 130px;
     height: 130px;
     border-radius: 50%;
-    background-color: transparent;
+    background-color: transparent; 
     position: relative;
     overflow: hidden;
     margin-left: 20px;
@@ -83,11 +94,11 @@ body {
     width: 90%;
     height: 90%;
     border-radius: 50%;
-    background-color: green;
-    z-index: 1;
+    background-color: green; 
+    z-index: 1; 
     transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
     transform-origin: center;
-    transform: rotate(-90deg); 
+    transform: rotate(-90deg);
 }
 
 /* Pulse Container (New element to hold the pulse) */
@@ -119,6 +130,7 @@ body {
     100% { transform: scale(0.95); }
 }
 
+
 /* Budget Info */
 .budget-info {
     text-align: right;
@@ -131,7 +143,7 @@ body {
     font-weight: bold;
     color: white;
     white-space: nowrap;
-    margin-bottom: 10px;
+    margin-bottom: 10px; 
 }
 
 /* Income Info */
@@ -163,20 +175,20 @@ h2 {
 /* Input Card Content */
 .input-content {
     display: flex;
-    flex-direction: column; 
-    margin-bottom: 15px; 
+    flex-direction: column;
+    margin-bottom: 15px;
 }
 
 /* Input Field */
 input[type="number"], 
 input[type="text"] {
-    width: calc(100% - 16px);
-    padding: 8px; 
-    border-radius: 5px; 
-    border: 1px solid #555;
-    background-color: #444;
+    width: calc(100% - 16px); 
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #555; 
+    background-color: #444; 
     color: #eee;
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
 }
 
 /* Buttons */
@@ -184,12 +196,12 @@ button {
     background-color: #4CAF50; 
     border: none;
     color: white;
-    padding: 10px 20px; 
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 1rem; 
-    border-radius: 8px; 
+    font-size: 1rem;
+    border-radius: 8px;
     transition: background-color 0.3s;
     cursor: pointer;
 }
@@ -200,12 +212,12 @@ button:hover {
 
 .delete-item {
     background-color: #f44336;
-    padding: 6px 12px; 
-    font-size: 0.8rem; 
+    padding: 6px 12px;
+    font-size: 0.8rem;
 }
 
 .delete-item:hover {
-    background-color: #d32f2f; 
+    background-color: #d32f2f;
 }
 
 /* Budget Categories Container */
@@ -248,10 +260,10 @@ button:hover {
 
 /* Budget Item Sub-Chip */
 .budget-item {
-    background-color: #444; 
+    background-color: #444;
     border-radius: 8px;
     padding: 8px;
-    margin-bottom: 5px;
+    margin-bottom: 5px; 
     display: flex;
     align-items: center;
     justify-content: space-between; 
@@ -286,7 +298,7 @@ button:hover {
 .tags {
     display: flex;
     flex-wrap: wrap; 
-    gap: 5px;
+    gap: 5px; 
 }
 
 /* Add Item Button (within category) */
@@ -299,11 +311,11 @@ button:hover {
     text-decoration: none;
     display: inline-block;
     font-size: 0.8rem;
-    border-radius: 5px;
+    border-radius: 5px; 
     transition: background-color 0.3s;
     cursor: pointer;
     margin-top: 8px;
-    align-self: flex-end; 
+    align-self: flex-end;
 }
 
 .add-item-button:hover {
@@ -314,21 +326,26 @@ button:hover {
 .category-selection {
     margin-bottom: 10px; 
     display: flex;
-    flex-wrap: wrap; /* Allow buttons to wrap */
-    gap: 8px; /* Space between buttons */
+    flex-wrap: wrap; 
+    gap: 8px;
 }
 
 .category-selection button {
-    background-color: #5bc0de;
+    background-color: #5bc0de; 
     color: white;
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1rem;
-    width: auto; 
-    min-width: 80px;
+    font-size: 1rem; 
+    width: auto;
+    min-width: 80px; 
     transition: background-color 0.2s;
+}
+
+/* Style for selected category button */
+.category-selection button.selected {
+    background-color: #31b0d5; 
 }
 
 .category-selection button:hover {
@@ -337,7 +354,7 @@ button:hover {
 
 /* Tag Selection Interface */
 .tag-selection {
-    display: none;
+    display: none; 
     position: absolute;
     background-color: #202020;
     border-radius: 8px;
@@ -348,7 +365,7 @@ button:hover {
 }
 
 .tag-selection.show {
-    display: block;
+    display: block; 
 }
 
 .tag-selection button {
@@ -359,7 +376,7 @@ button:hover {
     margin: 5px 0;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 0.8rem; 
     width: calc(100% - 10px); 
     transition: background-color 0.2s;
 }

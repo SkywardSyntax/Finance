@@ -10,10 +10,11 @@
     <div class="container" id="container">
 
         <div class="time-period-chip" id="time-period-chip">
-            <span class="label">Monthly</span> 
+            <div class="draggable-area"></div> <span class="label">Monthly</span> 
         </div>
 
         <div class="budget-card" id="budget-card">
+            <div class="draggable-area"></div> 
             <div class="ring-container">
                 <div class="budget-info">
                     <div class="label">Remaining Budget</div>
@@ -35,6 +36,7 @@
         </div>
 
         <div class="input-card" id="input-card">
+            <div class="draggable-area"></div> 
             <div class="input-content">
                 <h2 id="income-label">Enter Your Monthly Income</h2>
                 <input type="number" id="annual-income" placeholder="E.g., 5000">
@@ -43,9 +45,10 @@
         </div>
 
         <div class="budget-card" id="add-category-card">
+            <div class="draggable-area"></div> 
             <h2>Create Budget Categories</h2>
             <div class="category-selection" id="category-selection"></div>
-            <div class="input-field" id="custom-category-field" style="display: none;"> 
+            <div class="input-field" id="custom-category-field" style="display: none;">
                 <input type="text" id="category-name" placeholder="Custom Category Name">
             </div>
             <div class="input-field">

@@ -17,13 +17,13 @@ const customCategoryField = document.getElementById('custom-category-field');
 let totalIncome = 0;
 let budgetedAmount = 0;
 let isMonthly = true;
+let selectedCategoryButton = null;
 const defaultTags = ['Food', 'Rent', 'Utilities', 'Transportation', 'Entertainment', 'Education', 'Shopping', 'Travel', 'Other'];
 const budgetCategories = {};
 
 // Function to save the layout of all elements to localStorage
 function saveLayout() {
   const elementsToSave = ['budget-card', 'input-card', 'add-category-card', 'time-period-chip'];
-
   elementsToSave.forEach(elementId => {
     const element = document.getElementById(elementId);
     const containerRect = container.getBoundingClientRect();
@@ -41,7 +41,6 @@ function saveLayout() {
 // Function to load the layout of all elements from localStorage
 function loadLayout() {
   const elementsToLoad = ['budget-card', 'input-card', 'add-category-card', 'time-period-chip'];
-
   elementsToLoad.forEach(elementId => {
     const savedPosition = localStorage.getItem(elementId + '-position');
     if (savedPosition) {
@@ -86,7 +85,7 @@ function getCollisionSide(rect1, rect2) {
       if (crossWidth > -crossHeight) {
         return "bottom"; 
       } else {
-        return "left"; 
+        return "left";
       }
     } else {
       if (crossWidth > -crossHeight) {
@@ -96,7 +95,7 @@ function getCollisionSide(rect1, rect2) {
       }
     }
   }
-  return null; 
+  return null;
 }
 
 // Function to move a card inertially based on collision side
@@ -129,10 +128,10 @@ function snapToGrid(card, otherCard) {
 
   if (minDistanceKey === 'left') {
     card.style.left = (rect2.left - card.offsetWidth - gap) + 'px';
-    otherCard.style.left = (parseFloat(otherCard.style.left) - gap) + 'px'; 
+    otherCard.style.left = (parseFloat(otherCard.style.left) - gap) + 'px';
   } else if (minDistanceKey === 'right') {
     card.style.left = (rect2.right + gap) + 'px';
-    otherCard.style.left = (parseFloat(otherCard.style.left) + gap) + 'px'; 
+    otherCard.style.left = (parseFloat(otherCard.style.left) + gap) + 'px';
   } else if (minDistanceKey === 'top') {
     card.style.top = (rect2.top - card.offsetHeight - gap) + 'px';
     otherCard.style.top = (parseFloat(otherCard.style.top) - gap) + 'px'; 
@@ -145,28 +144,24 @@ function snapToGrid(card, otherCard) {
 // Make cards draggable
 function makeDraggable(elementId) {
   const card = document.getElementById(elementId);
+  const draggableArea = card.querySelector('.draggable-area'); 
   let isDragging = false;
   let offsetX, offsetY;
   let timeoutId;
 
-  // Add mousedown event to the card itself
-  card.addEventListener('mousedown', (e) => {
-    // Only start dragging if the background (not a button) is clicked
-    if (e.target === card) {
-      offsetX = e.clientX - parseFloat(card.style.left || 0);
-      offsetY = e.clientY - parseFloat(card.style.top || 0);
+  draggableArea.addEventListener('mousedown', (e) => {
+    offsetX = e.clientX - parseFloat(card.style.left || 0);
+    offsetY = e.clientY - parseFloat(card.style.top || 0);
 
-      timeoutId = setTimeout(() => {
-        isDragging = true;
-        card.style.cursor = 'grabbing';
-        card.classList.add('dragging');
-      }, 1000);
-    }
+    timeoutId = setTimeout(() => {
+      isDragging = true;
+      card.style.cursor = 'grabbing';
+      card.classList.add('dragging');
+    }, 1000); 
   });
 
   document.addEventListener('mousemove', (e) => {
     if (isDragging) {
-      // Calculate potential new position
       let newX = e.clientX - offsetX;
       let newY = e.clientY - offsetY;
 
@@ -177,7 +172,6 @@ function makeDraggable(elementId) {
         bottom: newY + card.offsetHeight,
       };
 
-      // Collision detection and snapping
       const otherCards = container.querySelectorAll('.budget-card, .input-card');
       for (let other of otherCards) {
         if (other !== card) {
@@ -185,26 +179,21 @@ function makeDraggable(elementId) {
           const collisionSide = getCollisionSide(rect1, rect2);
 
           if (collisionSide) {
-            // Stop dragging
             isDragging = false;
             card.style.cursor = 'grab';
             card.classList.remove('dragging');
 
-            // Snap dragged card to grid
             snapToGrid(card, other);
 
-            // Inertial movement for the impacted card
             moveInertially(other, collisionSide, 16);
 
-            saveLayout(elementId);
-            saveLayout(other.id); 
+            saveLayout(); 
 
             return;
           }
         }
       }
 
-      // If no collision, update card position
       card.style.left = newX + 'px';
       card.style.top = newY + 'px';
     }
@@ -224,7 +213,6 @@ function addTagToItem(budgetItem, tagText) {
   tagElement.classList.add('tag');
   tagElement.textContent = tagText;
 
-  // Remove tag on click
   tagElement.addEventListener('click', () => {
     tagElement.remove();
   });
@@ -243,7 +231,7 @@ function toggleTagSelection(parent, tagSelectionContainer) {
     tagButton.textContent = tag;
     tagButton.addEventListener('click', () => {
       addTagToItem(parent, tag);
-      tagSelection.remove(); 
+      tagSelection.remove();
     });
     tagSelection.appendChild(tagButton);
   });
@@ -257,10 +245,17 @@ function createCategoryButton(categoryName) {
   const categoryButton = document.createElement('button');
   categoryButton.textContent = categoryName;
   categoryButton.addEventListener('click', () => {
+    if (selectedCategoryButton) {
+      selectedCategoryButton.classList.remove('selected');
+    }
+
+    categoryButton.classList.add('selected');
+    selectedCategoryButton = categoryButton; 
+
     categoryNameInput.value = categoryName;
-    customCategoryField.style.display = 'none'; 
+    customCategoryField.style.display = 'none';
     if (categoryName === "Other") {
-      customCategoryField.style.display = 'block'; 
+      customCategoryField.style.display = 'block';
     }
   });
   return categoryButton;
@@ -273,30 +268,30 @@ loadLayout();
 initializeCardPosition('budget-card', '400px', '50px');
 initializeCardPosition('input-card', '50px', '200px');
 initializeCardPosition('add-category-card', '50px', '400px');
-initializeCardPosition('time-period-chip', '50%', '10px'); 
+initializeCardPosition('time-period-chip', '50%', '10px');
 
 // Make the cards draggable
 makeDraggable('budget-card');
 makeDraggable('input-card');
 makeDraggable('add-category-card');
-makeDraggable('time-period-chip'); 
+makeDraggable('time-period-chip');
 
 // Set Income Button
 setIncomeButton.addEventListener('click', () => {
   totalIncome = parseFloat(annualIncomeInput.value) || 0;
   incomeValueSpan.textContent = `$${totalIncome.toFixed(2)}`;
   updateBudgetRing();
-  updateCategoryAmounts(); 
+  updateCategoryAmounts();
 });
 
 // Add Category Button
 addCategoryButton.addEventListener('click', () => {
-  const categoryName = categoryNameInput.value;
+  const categoryName = categoryNameInput.value; 
   let categoryAmount = parseFloat(categoryAmountInput.value);
 
   if (categoryName && !isNaN(categoryAmount) && categoryAmount > 0) {
     if (isMonthly) {
-      categoryAmount *= 12; 
+      categoryAmount *= 12;
     }
 
     if (budgetedAmount + categoryAmount > totalIncome) {
@@ -312,13 +307,14 @@ addCategoryButton.addEventListener('click', () => {
     categoryItem.innerHTML = `
       <div class="category-info">
           <span class="name">${categoryName}</span>
-          <span class="amount">$${(categoryAmount / (isMonthly ? 12 : 1)).toFixed(2)}</span>
+          <span class="amount">$${(categoryAmount / (isMonthly ? 12 : 1)).toFixed(2)}</span> 
       </div>
       <div class="category-items" id="items-${categoryItem.id}"></div>
       <button class="add-item-button" data-category="${categoryItem.id}">Add Item</button>
     `;
     budgetCategoriesContainer.appendChild(categoryItem);
 
+    // Store category data
     budgetCategories[categoryItem.id] = {
       name: categoryName,
       allocated: categoryAmount,
@@ -326,11 +322,13 @@ addCategoryButton.addEventListener('click', () => {
       items: [],
     };
 
-    addTagToItem(categoryItem, categoryName); 
+    // Add initial category tag to the category
+    addTagToItem(categoryItem, categoryName);
 
+    // Add item to category functionality
     const addItemToCategoryButton = categoryItem.querySelector('.add-item-button');
     addItemToCategoryButton.addEventListener('click', (event) => {
-      event.stopPropagation();
+      event.stopPropagation(); 
 
       const categoryId = addItemToCategoryButton.dataset.category;
       const category = budgetCategories[categoryId];
@@ -339,13 +337,14 @@ addCategoryButton.addEventListener('click', () => {
       let itemAmount = parseFloat(prompt(`Enter item amount for ${category.name}:`));
 
       if (itemName && !isNaN(itemAmount) && itemAmount > 0) {
+        // Adjust item amount based on time period
         if (!isMonthly) {
           itemAmount /= 12;
         }
 
         if (category.spent + itemAmount > category.allocated) {
           alert(`Error: Item amount exceeds remaining budget for ${category.name}!`);
-          return;
+          return; 
         }
 
         category.spent += itemAmount;
@@ -357,7 +356,7 @@ addCategoryButton.addEventListener('click', () => {
         budgetItem.innerHTML = `
           <div class="budget-item-info">
             <span class="name">${itemName}</span>
-            <span class="amount">$${(itemAmount * (isMonthly ? 1 : 12)).toFixed(2)}</span>
+            <span class="amount">$${(itemAmount * (isMonthly ? 1 : 12)).toFixed(2)}</span> 
           </div>
           <div class="tags"></div>
           <button class="add-tags-button">Add Tags</button>
@@ -365,33 +364,38 @@ addCategoryButton.addEventListener('click', () => {
         `;
         categoryItemsContainer.appendChild(budgetItem);
 
-        addTagToItem(budgetItem, categoryName);
+        // Add the category tag to the item
+        addTagToItem(budgetItem, categoryName); 
 
+        // Delete budget item functionality
         const deleteButton = budgetItem.querySelector('.delete-item');
         deleteButton.addEventListener('click', () => {
           const amountToDelete = parseFloat(deleteButton.dataset.amount);
           const categoryId = deleteButton.dataset.category;
           const category = budgetCategories[categoryId];
           category.spent -= amountToDelete;
-          category.items = category.items.filter(item => item.amount !== amountToDelete); 
+          category.items = category.items.filter(item => item.amount !== amountToDelete);
           budgetItem.remove();
           updateCategoryAmount(categoryId); 
-          updateBudgetRing(); 
+          updateBudgetRing();
         });
 
+        // Add tags button functionality
         const addTagsButton = budgetItem.querySelector('.add-tags-button');
         addTagsButton.addEventListener('click', (event) => {
-          event.stopPropagation();
+          // Stop propagation to prevent dragging the parent category chip
+          event.stopPropagation(); 
+
           const tagSelectionContainer = budgetItem.querySelector('.tags'); 
           toggleTagSelection(budgetItem, tagSelectionContainer);
         });
 
         updateCategoryAmount(categoryId);
-        updateBudgetRing(); 
+        updateBudgetRing();
       }
     });
 
-    updateCategoryAmount(categoryItem.id);
+    updateCategoryAmount(categoryItem.id); 
     updateBudgetRing(); 
     categoryNameInput.value = '';
     categoryAmountInput.value = ''; 
@@ -408,18 +412,21 @@ function updateBudgetRing() {
   let deg = (percentage / 100) * 360;
   deg = deg - 90; 
 
+  // Update the ring fill's rotation for depletion
   budgetRingFill.style.transform = `rotate(${deg}deg)`;
 
   budgetAmountText.textContent = `$${remainingAmount.toFixed(2)}`;
 
+  // Dynamically set the border color based on the percentage
   if (percentage <= 10) {
-    budgetRingFill.style.backgroundColor = 'red';
+    budgetRingFill.style.backgroundColor = 'red'; 
   } else if (percentage <= 50) {
     budgetRingFill.style.backgroundColor = 'yellow';
   } else {
-    budgetRingFill.style.backgroundColor = 'green';
+    budgetRingFill.style.backgroundColor = 'green'; 
   }
 
+  // Adjust font size to fit
   if (remainingAmount.toString().length > 8) {
     budgetAmountText.style.fontSize = "1.5rem";
   } else if (remainingAmount.toString().length > 6) {
@@ -435,10 +442,10 @@ function updateCategoryAmount(categoryId) {
   const categoryAmountSpan = document.querySelector(`#${categoryId} .amount`);
 
   const displayAmount = isMonthly ? category.allocated / 12 : category.allocated;
-  categoryAmountSpan.textContent = `$${(displayAmount - category.spent * (isMonthly ? 1 : 12)).toFixed(2)}`;
+  categoryAmountSpan.textContent = `$${(displayAmount - category.spent * (isMonthly ? 1 : 12)).toFixed(2)}`; 
 }
 
-// Update all category amounts 
+// Update all category amounts (used when time period changes)
 function updateCategoryAmounts() {
   for (const categoryId in budgetCategories) {
     updateCategoryAmount(categoryId);
@@ -450,10 +457,12 @@ timePeriodChip.addEventListener('click', () => {
   isMonthly = !isMonthly; 
   timePeriodChip.querySelector('.label').textContent = isMonthly ? 'Monthly' : 'Yearly';
 
+  // Update income label
   incomeLabel.textContent = `Enter Your ${isMonthly ? 'Monthly' : 'Annual'} Income`;
 
-  updateBudgetRing();
-  updateCategoryAmounts();
+  // Update budget amount and category amounts
+  updateBudgetRing(); 
+  updateCategoryAmounts(); 
 });
 
 // Populate Category Selection buttons
