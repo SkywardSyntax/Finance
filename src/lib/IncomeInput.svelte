@@ -4,14 +4,17 @@
   import { dndzone } from 'svelte-dnd-action';
   import { dragging } from './store.js';
 
+  const dispatch = createEventDispatcher();
+
   const handleIncomeChange = (event: Event) => {
-    const target = event.target as HTMLInputElement; // Type cast
+    const target = event.target as HTMLInputElement; 
     totalIncome = parseFloat(target.value) || 0;
   };
 
   const handleDndUpdate = ({ detail }: { detail: { x: number; y: number } }) => {
     item.x = detail.x;
     item.y = detail.y;
+    dispatch('dragend');
   };
 </script>
 
@@ -22,13 +25,17 @@
     flipDurationMs: 200,
   }}
   on:dndzone:reorder={handleDndUpdate}
-  on:mousedown={() => dragging.set(true)}
-  on:mouseup={() => dragging.set(false)}
-  style="cursor: {$dragging ? 'grabbing' : 'grab'}"
 >
+  <div class="draggable-area" on:mousedown={() => dragging.set(true)} on:mouseup={() => dragging.set(false)}
+  style="cursor: {$dragging ? 'grabbing' : 'grab'}"></div>
   <div class="input-content">
     <h2>Enter Your Monthly Income</h2>
-    <input type="number" id="annual-income" placeholder="E.g., 5000" on:input={handleIncomeChange} />
+    <input
+      type="number"
+      id="annual-income"
+      placeholder="E.g., 5000"
+      on:input={handleIncomeChange}
+    />
   </div>
   <button on:click={() => { console.log('Set Income button clicked, but no action defined yet.'); }}>
     Set Income

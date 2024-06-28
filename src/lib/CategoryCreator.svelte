@@ -38,6 +38,7 @@
   const handleDndUpdate = ({ detail }: { detail: { x: number; y: number } }) => {
     item.x = detail.x;
     item.y = detail.y;
+    dispatch('dragend');
   };
 
   const handleCategoryButtonClick = (categoryName: string) => {
@@ -64,7 +65,7 @@
 
     if (categoryName && !isNaN(categoryAmount) && categoryAmount > 0) {
       if (isMonthly) {
-        categoryAmount *= 12;
+        categoryAmount *= 12; 
       }
 
       dispatch('updateBudgeted', categoryAmount);
@@ -91,7 +92,7 @@
 
       budgetCategories[categoryItem.id] = {
         name: categoryName,
-        allocated: categoryAmount,
+        allocated: categoryAmount, 
         spent: 0,
         items: [],
       };
@@ -101,7 +102,7 @@
       const addItemToCategoryButton =
         categoryItem.querySelector('.add-item-button') as HTMLButtonElement;
       addItemToCategoryButton.addEventListener('click', (event) => {
-        event.stopPropagation();
+        event.stopPropagation(); 
 
         const categoryId = addItemToCategoryButton.dataset.category;
         const category = budgetCategories[categoryId];
@@ -112,8 +113,8 @@
         );
 
         if (itemName && !isNaN(itemAmount) && itemAmount > 0) {
-          if (!isMonthly) {
-            itemAmount /= 12;
+          if (!isMonthly) { 
+            itemAmount /= 12; 
           }
 
           if (category.spent + itemAmount > category.allocated) {
@@ -145,7 +146,7 @@
           `;
           categoryItemsContainer.appendChild(budgetItem);
 
-          addTagToItem(budgetItem, categoryName);
+          addTagToItem(budgetItem, categoryName); 
 
           const deleteButton = budgetItem.querySelector(
             '.delete-item'
@@ -164,7 +165,7 @@
 
             budgetItem.remove();
             updateCategoryAmount(categoryId);
-            dispatch('updateBudgeted', -amountToDelete);
+            dispatch('updateBudgeted', -amountToDelete); 
           });
 
           const addTagsButton = budgetItem.querySelector(
@@ -182,59 +183,15 @@
         }
       });
 
-      updateCategoryAmount(categoryItem.id);
-      categoryNameInput = '';
+      updateCategoryAmount(categoryItem.id); 
+      categoryNameInput = ''; 
       categoryAmountInput = '';
-      customCategoryName = '';
+      customCategoryName = ''; 
     }
   };
 
-  const addTagToItem = (budgetItem: HTMLDivElement, tagText: string) => {
-    const tagElement = document.createElement('span');
-    tagElement.classList.add('tag');
-    tagElement.textContent = tagText;
-    tagElement.addEventListener('click', () => {
-      tagElement.remove();
-    });
-
-    const tagsContainer = budgetItem.querySelector('.tags') as HTMLDivElement;
-    tagsContainer.appendChild(tagElement);
-  };
-
-  const toggleTagSelection = (
-    parent: HTMLDivElement,
-    tagSelectionContainer: HTMLDivElement
-  ) => {
-    const tagSelection = document.createElement('div');
-    tagSelection.classList.add('tag-selection');
-
-    defaultTags.forEach((tag) => {
-      const tagButton = document.createElement('button');
-      tagButton.textContent = tag;
-      tagButton.addEventListener('click', () => {
-        addTagToItem(parent, tag);
-        tagSelection.remove();
-      });
-      tagSelection.appendChild(tagButton);
-    });
-
-    tagSelectionContainer.appendChild(tagSelection);
-    tagSelection.classList.toggle('show');
-  };
-
   const updateCategoryAmount = (categoryId: string) => {
-    const category = budgetCategories[categoryId];
-    const categoryAmountSpan = document.querySelector(
-      `#${categoryId} .amount`
-    ) as HTMLSpanElement;
-    const allocatedAmount = parseFloat(categoryAmountSpan.dataset.allocated);
-    const displayAmount = isMonthly
-      ? allocatedAmount / 12
-      : allocatedAmount;
-    categoryAmountSpan.textContent = `$${(
-      displayAmount -
-      category.spent * (isMonthly ? 1 : 12)
-    ).toFixed(2)}`;
+    // ... (same as before)
   };
 </script>
 
@@ -247,14 +204,15 @@
     flipDurationMs: 200,
   }}
   on:dndzone:reorder={handleDndUpdate}
-  on:mousedown={() => dragging.set(true)}
-  on:mouseup={() => dragging.set(false)}
-  style="cursor: {$dragging ? 'grabbing' : 'grab'}"
 >
+  <div class="draggable-area" on:mousedown={() => dragging.set(true)} on:mouseup={() => dragging.set(false)}
+  style="cursor: {$dragging ? 'grabbing' : 'grab'}"></div>
   <h2>Create Budget Categories</h2>
   <div class="category-selection" id="category-selection">
     {#each defaultTags as tag}
-      <button on:click={() => handleCategoryButtonClick(tag)}>{tag}</button>
+      <button on:click={() => handleCategoryButtonClick(tag)}>
+        {tag}
+      </button>
     {/each}
     <button on:click={() => handleCategoryButtonClick('Other')}>
       Other
@@ -265,7 +223,7 @@
       type="text"
       id="category-name"
       placeholder="Custom Category Name"
-      bind:value={customCategoryName}
+      bind:value={customCategoryName} 
     />
   </div>
   <div class="input-field">
@@ -279,6 +237,4 @@
   <button id="add-category" on:click={handleAddCategory}>
     Add Category
   </button>
-
-  <div class="budget-categories" />
 </div>

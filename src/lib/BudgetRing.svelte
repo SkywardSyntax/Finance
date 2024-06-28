@@ -8,7 +8,8 @@
   $: remainingAmount = totalIncome - budgetedAmount;
   $: percentage = (remainingAmount / totalIncome) * 100 || 100;
   $: deg = (percentage / 100) * 360 - 90;
-  $: ringColor = percentage <= 10 ? 'red' : percentage <= 50 ? 'yellow' : 'green';
+  $: ringColor =
+    percentage <= 10 ? 'red' : percentage <= 50 ? 'yellow' : 'green';
   $: amountTextSize =
     remainingAmount.toString().length > 8
       ? '1.5rem'
@@ -16,9 +17,25 @@
       ? '2rem'
       : '2.5rem';
 
+  const dispatch = createEventDispatcher();
+
   const handleDndUpdate = ({ detail }: { detail: { x: number; y: number } }) => {
     item.x = detail.x;
     item.y = detail.y;
+
+    dispatch('dragend');
+  };
+
+  const handleMouseDown = (event: MouseEvent) => {
+    // Check if the click is on the draggable area
+    if ((event.target as HTMLElement).classList.contains('draggable-area')) {
+      dragging.set(true);
+    }
+  };
+
+  const handleMouseUp = (event: MouseEvent) => {
+    dragging.set(false);
+    dispatch('dragend');
   };
 </script>
 
@@ -28,9 +45,9 @@
     items: [{ id: item.id }],
     flipDurationMs: 200,
   }}
-  on:dndzone:reorder={handleDndUpdate}
-  on:mousedown={() => dragging.set(true)} 
-  on:mouseup={() => dragging.set(false)}
+  on:dndzone-reorder={handleDndUpdate} 
+  on:mousedown={handleMouseDown}
+  on:mouseup={handleMouseUp}
   style="cursor: {$dragging ? 'grabbing' : 'grab'}"
 >
   <div class="ring-container">
@@ -55,7 +72,7 @@
     </div>
   </div>
   <div class="label">Budget Categories</div>
-  <div class="budget-categories">
+  <div class="budget-categories" id="budget-categories-container">
     <!-- Budget categories will go here -->
   </div>
 </div>
