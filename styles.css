@@ -17,12 +17,15 @@ body {
     width: 100%;
 }
 
-.budget-card, .input-card, .time-period-chip {
+/*  Add position: relative */
+.budget-card, 
+.input-card, 
+.time-period-chip {
     background-color: #202020;
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: absolute;
+    position: relative; 
 }
 
 /* More subtle wiggle animation */
@@ -40,7 +43,8 @@ body {
 
 /* Make only the draggable-area active */
 .draggable-area:active {
-    background-color: #2a2a2a;
+    background-color: transparent; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Add box-shadow */
 }
 
 /* Time Period Chip */
@@ -72,7 +76,7 @@ body {
 .ring-container {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 100%; 
 }
 
 /* Budget Ring */
@@ -83,7 +87,7 @@ body {
     background-color: transparent; 
     position: relative;
     overflow: hidden;
-    margin-left: 20px;
+    margin-left: 20px; 
 }
 
 /* Budget Ring Fill - This will be the colored part */
@@ -94,11 +98,11 @@ body {
     width: 90%;
     height: 90%;
     border-radius: 50%;
-    background-color: green; 
-    z-index: 1; 
+    background-color: green;
+    z-index: 1;
     transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
     transform-origin: center;
-    transform: rotate(-90deg);
+    transform: rotate(-90deg); 
 }
 
 /* Pulse Container (New element to hold the pulse) */
@@ -169,14 +173,14 @@ body {
 /* Headings */
 h2 {
     color: #eee;
-    margin-bottom: 15px; 
+    margin-bottom: 15px;
 }
 
 /* Input Card Content */
 .input-content {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
+    flex-direction: column; 
+    margin-bottom: 15px; 
 }
 
 /* Input Field */
@@ -184,11 +188,11 @@ input[type="number"],
 input[type="text"] {
     width: calc(100% - 16px); 
     padding: 8px;
-    border-radius: 5px;
+    border-radius: 5px; 
     border: 1px solid #555; 
     background-color: #444; 
     color: #eee;
-    margin-bottom: 10px;
+    margin-bottom: 10px; 
 }
 
 /* Buttons */
@@ -196,12 +200,12 @@ button {
     background-color: #4CAF50; 
     border: none;
     color: white;
-    padding: 10px 20px;
+    padding: 10px 20px; 
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 1rem;
-    border-radius: 8px;
+    font-size: 1rem; 
+    border-radius: 8px; 
     transition: background-color 0.3s;
     cursor: pointer;
 }
@@ -212,8 +216,8 @@ button:hover {
 
 .delete-item {
     background-color: #f44336;
-    padding: 6px 12px;
-    font-size: 0.8rem;
+    padding: 6px 12px; 
+    font-size: 0.8rem; 
 }
 
 .delete-item:hover {
@@ -260,10 +264,10 @@ button:hover {
 
 /* Budget Item Sub-Chip */
 .budget-item {
-    background-color: #444;
+    background-color: #444; 
     border-radius: 8px;
     padding: 8px;
-    margin-bottom: 5px; 
+    margin-bottom: 5px;
     display: flex;
     align-items: center;
     justify-content: space-between; 
@@ -292,13 +296,13 @@ button:hover {
     border-radius: 5px;
     font-size: 0.7rem;
     cursor: pointer;
-    margin-left: 8px; 
+    margin-left: 8px;
 }
 
 .tags {
     display: flex;
-    flex-wrap: wrap; 
-    gap: 5px; 
+    flex-wrap: wrap;
+    gap: 5px;
 }
 
 /* Add Item Button (within category) */
@@ -311,7 +315,7 @@ button:hover {
     text-decoration: none;
     display: inline-block;
     font-size: 0.8rem;
-    border-radius: 5px; 
+    border-radius: 5px;
     transition: background-color 0.3s;
     cursor: pointer;
     margin-top: 8px;
@@ -324,48 +328,48 @@ button:hover {
 
 /* Category Selection Interface */
 .category-selection {
-    margin-bottom: 10px; 
+    margin-bottom: 10px;
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     gap: 8px;
 }
 
 .category-selection button {
-    background-color: #5bc0de; 
+    background-color: #5bc0de;
     color: white;
     border: none;
     padding: 8px 16px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 1rem; 
+    font-size: 1rem;
     width: auto;
-    min-width: 80px; 
+    min-width: 80px;
     transition: background-color 0.2s;
 }
 
 /* Style for selected category button */
 .category-selection button.selected {
-    background-color: #31b0d5; 
+    background-color: #31b0d5;
 }
 
 .category-selection button:hover {
-    background-color: #46b8da; 
+    background-color: #46b8da;
 }
 
 /* Tag Selection Interface */
 .tag-selection {
-    display: none; 
+    display: none;
     position: absolute;
     background-color: #202020;
     border-radius: 8px;
     padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    z-index: 3; 
-    margin-top: 5px; 
+    z-index: 3;
+    margin-top: 5px;
 }
 
 .tag-selection.show {
-    display: block; 
+    display: block;
 }
 
 .tag-selection button {
@@ -376,11 +380,11 @@ button:hover {
     margin: 5px 0;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.8rem; 
-    width: calc(100% - 10px); 
+    font-size: 0.8rem;
+    width: calc(100% - 10px);
     transition: background-color 0.2s;
 }
 
 .tag-selection button:hover {
-    background-color: #46b8da; 
+    background-color: #46b8da;
 }

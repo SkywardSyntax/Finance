@@ -24,6 +24,7 @@ const budgetCategories = {};
 // Function to save the layout of all elements to localStorage
 function saveLayout() {
   const elementsToSave = ['budget-card', 'input-card', 'add-category-card', 'time-period-chip'];
+
   elementsToSave.forEach(elementId => {
     const element = document.getElementById(elementId);
     const containerRect = container.getBoundingClientRect();
@@ -41,6 +42,7 @@ function saveLayout() {
 // Function to load the layout of all elements from localStorage
 function loadLayout() {
   const elementsToLoad = ['budget-card', 'input-card', 'add-category-card', 'time-period-chip'];
+
   elementsToLoad.forEach(elementId => {
     const savedPosition = localStorage.getItem(elementId + '-position');
     if (savedPosition) {
@@ -134,17 +136,17 @@ function snapToGrid(card, otherCard) {
     otherCard.style.left = (parseFloat(otherCard.style.left) + gap) + 'px';
   } else if (minDistanceKey === 'top') {
     card.style.top = (rect2.top - card.offsetHeight - gap) + 'px';
-    otherCard.style.top = (parseFloat(otherCard.style.top) - gap) + 'px'; 
+    otherCard.style.top = (parseFloat(otherCard.style.top) - gap) + 'px';
   } else {
     card.style.top = (rect2.bottom + gap) + 'px';
-    otherCard.style.top = (parseFloat(otherCard.style.top) + gap) + 'px'; 
+    otherCard.style.top = (parseFloat(otherCard.style.top) + gap) + 'px';
   }
 }
 
 // Make cards draggable
 function makeDraggable(elementId) {
   const card = document.getElementById(elementId);
-  const draggableArea = card.querySelector('.draggable-area'); 
+  const draggableArea = card.querySelector('.draggable-area');
   let isDragging = false;
   let offsetX, offsetY;
   let timeoutId;
@@ -162,6 +164,7 @@ function makeDraggable(elementId) {
 
   document.addEventListener('mousemove', (e) => {
     if (isDragging) {
+      // Calculate potential new position
       let newX = e.clientX - offsetX;
       let newY = e.clientY - offsetY;
 
@@ -172,6 +175,7 @@ function makeDraggable(elementId) {
         bottom: newY + card.offsetHeight,
       };
 
+      // Collision detection and snapping
       const otherCards = container.querySelectorAll('.budget-card, .input-card');
       for (let other of otherCards) {
         if (other !== card) {
@@ -179,12 +183,15 @@ function makeDraggable(elementId) {
           const collisionSide = getCollisionSide(rect1, rect2);
 
           if (collisionSide) {
+            // Stop dragging
             isDragging = false;
             card.style.cursor = 'grab';
             card.classList.remove('dragging');
 
+            // Snap dragged card to grid
             snapToGrid(card, other);
 
+            // Inertial movement for the impacted card
             moveInertially(other, collisionSide, 16);
 
             saveLayout(); 
@@ -194,6 +201,7 @@ function makeDraggable(elementId) {
         }
       }
 
+      // If no collision, update card position
       card.style.left = newX + 'px';
       card.style.top = newY + 'px';
     }
@@ -213,6 +221,7 @@ function addTagToItem(budgetItem, tagText) {
   tagElement.classList.add('tag');
   tagElement.textContent = tagText;
 
+  // Remove tag on click
   tagElement.addEventListener('click', () => {
     tagElement.remove();
   });
@@ -231,13 +240,13 @@ function toggleTagSelection(parent, tagSelectionContainer) {
     tagButton.textContent = tag;
     tagButton.addEventListener('click', () => {
       addTagToItem(parent, tag);
-      tagSelection.remove();
+      tagSelection.remove(); 
     });
     tagSelection.appendChild(tagButton);
   });
 
   tagSelectionContainer.appendChild(tagSelection);
-  tagSelection.classList.toggle('show');
+  tagSelection.classList.toggle('show'); 
 }
 
 // Function to create a category button
@@ -245,17 +254,19 @@ function createCategoryButton(categoryName) {
   const categoryButton = document.createElement('button');
   categoryButton.textContent = categoryName;
   categoryButton.addEventListener('click', () => {
+    // Deselect the previously selected button
     if (selectedCategoryButton) {
       selectedCategoryButton.classList.remove('selected');
     }
 
+    // Select the clicked button
     categoryButton.classList.add('selected');
     selectedCategoryButton = categoryButton; 
 
     categoryNameInput.value = categoryName;
     customCategoryField.style.display = 'none';
     if (categoryName === "Other") {
-      customCategoryField.style.display = 'block';
+      customCategoryField.style.display = 'block'; 
     }
   });
   return categoryButton;
@@ -268,7 +279,7 @@ loadLayout();
 initializeCardPosition('budget-card', '400px', '50px');
 initializeCardPosition('input-card', '50px', '200px');
 initializeCardPosition('add-category-card', '50px', '400px');
-initializeCardPosition('time-period-chip', '50%', '10px');
+initializeCardPosition('time-period-chip', '50%', '10px'); 
 
 // Make the cards draggable
 makeDraggable('budget-card');
@@ -281,7 +292,7 @@ setIncomeButton.addEventListener('click', () => {
   totalIncome = parseFloat(annualIncomeInput.value) || 0;
   incomeValueSpan.textContent = `$${totalIncome.toFixed(2)}`;
   updateBudgetRing();
-  updateCategoryAmounts();
+  updateCategoryAmounts(); 
 });
 
 // Add Category Button
@@ -291,15 +302,15 @@ addCategoryButton.addEventListener('click', () => {
 
   if (categoryName && !isNaN(categoryAmount) && categoryAmount > 0) {
     if (isMonthly) {
-      categoryAmount *= 12;
+      categoryAmount *= 12; 
     }
 
     if (budgetedAmount + categoryAmount > totalIncome) {
       alert("Error: Category allocation exceeds remaining budget!");
-      return;
+      return; 
     }
 
-    budgetedAmount += categoryAmount;
+    budgetedAmount += categoryAmount; 
 
     const categoryItem = document.createElement('div');
     categoryItem.classList.add('budget-category');
@@ -328,6 +339,7 @@ addCategoryButton.addEventListener('click', () => {
     // Add item to category functionality
     const addItemToCategoryButton = categoryItem.querySelector('.add-item-button');
     addItemToCategoryButton.addEventListener('click', (event) => {
+      // Prevent dragging of the parent card
       event.stopPropagation(); 
 
       const categoryId = addItemToCategoryButton.dataset.category;
@@ -344,7 +356,7 @@ addCategoryButton.addEventListener('click', () => {
 
         if (category.spent + itemAmount > category.allocated) {
           alert(`Error: Item amount exceeds remaining budget for ${category.name}!`);
-          return; 
+          return;
         }
 
         category.spent += itemAmount;
@@ -359,13 +371,13 @@ addCategoryButton.addEventListener('click', () => {
             <span class="amount">$${(itemAmount * (isMonthly ? 1 : 12)).toFixed(2)}</span> 
           </div>
           <div class="tags"></div>
-          <button class="add-tags-button">Add Tags</button>
+          <button class="add-tags-button">Add Tags</button> 
           <button class="delete-item" data-amount="${itemAmount}" data-category="${categoryId}">Delete</button>
         `;
         categoryItemsContainer.appendChild(budgetItem);
 
         // Add the category tag to the item
-        addTagToItem(budgetItem, categoryName); 
+        addTagToItem(budgetItem, categoryName);
 
         // Delete budget item functionality
         const deleteButton = budgetItem.querySelector('.delete-item');
@@ -376,16 +388,14 @@ addCategoryButton.addEventListener('click', () => {
           category.spent -= amountToDelete;
           category.items = category.items.filter(item => item.amount !== amountToDelete);
           budgetItem.remove();
-          updateCategoryAmount(categoryId); 
+          updateCategoryAmount(categoryId);
           updateBudgetRing();
         });
 
         // Add tags button functionality
         const addTagsButton = budgetItem.querySelector('.add-tags-button');
         addTagsButton.addEventListener('click', (event) => {
-          // Stop propagation to prevent dragging the parent category chip
-          event.stopPropagation(); 
-
+          event.stopPropagation();
           const tagSelectionContainer = budgetItem.querySelector('.tags'); 
           toggleTagSelection(budgetItem, tagSelectionContainer);
         });
@@ -397,8 +407,8 @@ addCategoryButton.addEventListener('click', () => {
 
     updateCategoryAmount(categoryItem.id); 
     updateBudgetRing(); 
-    categoryNameInput.value = '';
-    categoryAmountInput.value = ''; 
+    categoryNameInput.value = ''; 
+    categoryAmountInput.value = '';
   }
 });
 
@@ -407,10 +417,10 @@ function updateBudgetRing() {
   const remainingAmount = totalIncome - budgetedAmount;
   let percentage = (remainingAmount / totalIncome) * 100;
   if (isNaN(percentage)) {
-    percentage = 100; 
+    percentage = 100;
   }
   let deg = (percentage / 100) * 360;
-  deg = deg - 90; 
+  deg = deg - 90;
 
   // Update the ring fill's rotation for depletion
   budgetRingFill.style.transform = `rotate(${deg}deg)`;
@@ -419,11 +429,11 @@ function updateBudgetRing() {
 
   // Dynamically set the border color based on the percentage
   if (percentage <= 10) {
-    budgetRingFill.style.backgroundColor = 'red'; 
+    budgetRingFill.style.backgroundColor = 'red';
   } else if (percentage <= 50) {
     budgetRingFill.style.backgroundColor = 'yellow';
   } else {
-    budgetRingFill.style.backgroundColor = 'green'; 
+    budgetRingFill.style.backgroundColor = 'green';
   }
 
   // Adjust font size to fit
@@ -442,10 +452,10 @@ function updateCategoryAmount(categoryId) {
   const categoryAmountSpan = document.querySelector(`#${categoryId} .amount`);
 
   const displayAmount = isMonthly ? category.allocated / 12 : category.allocated;
-  categoryAmountSpan.textContent = `$${(displayAmount - category.spent * (isMonthly ? 1 : 12)).toFixed(2)}`; 
+  categoryAmountSpan.textContent = `$${(displayAmount - category.spent * (isMonthly ? 1 : 12)).toFixed(2)}`;
 }
 
-// Update all category amounts (used when time period changes)
+// Update all category amounts 
 function updateCategoryAmounts() {
   for (const categoryId in budgetCategories) {
     updateCategoryAmount(categoryId);
@@ -454,15 +464,13 @@ function updateCategoryAmounts() {
 
 // Time Period Chip Functionality
 timePeriodChip.addEventListener('click', () => {
-  isMonthly = !isMonthly; 
+  isMonthly = !isMonthly;
   timePeriodChip.querySelector('.label').textContent = isMonthly ? 'Monthly' : 'Yearly';
 
-  // Update income label
   incomeLabel.textContent = `Enter Your ${isMonthly ? 'Monthly' : 'Annual'} Income`;
 
-  // Update budget amount and category amounts
-  updateBudgetRing(); 
-  updateCategoryAmounts(); 
+  updateBudgetRing();
+  updateCategoryAmounts();
 });
 
 // Populate Category Selection buttons
