@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   export let isMonthly = true;
-  export let item; 
+  export let item: { id: string; x: number; y: number };
   import { dndzone } from 'svelte-dnd-action';
-  import { dragging } from '../App.svelte'; 
+  import { dragging } from './store.js';
 
-  const handleDndUpdate = ({ detail }) => {
+  const handleDndUpdate = ({ detail }: { detail: { x: number; y: number } }) => {
     item.x = detail.x;
     item.y = detail.y;
   };
@@ -14,18 +14,21 @@
   };
 </script>
 
-<div
+<button 
   class="time-period-chip"
+  role="button"
   use:dndzone={{
-    items: [{ id: item.id }], 
-    flipDurationMs: 200, 
+    items: [{ id: item.id }],
+    flipDurationMs: 200,
   }}
-  on:dndzone:reorder={handleDndUpdate} 
-  on:click={toggleTimePeriod} 
-  style="cursor: {$dragging ? 'grabbing' : 'grab'}" 
+  on:dndzone:reorder={handleDndUpdate}
+  on:click={toggleTimePeriod}
+  on:mousedown={() => dragging.set(true)}
+  on:mouseup={() => dragging.set(false)}
+  style="cursor: {$dragging ? 'grabbing' : 'grab'}"
 >
   <span class="label">{isMonthly ? 'Monthly' : 'Yearly'}</span>
-</div>
+</button>
 
 <style>
   .time-period-chip {
@@ -39,6 +42,7 @@
     user-select: none;
     width: fit-content;
     z-index: 1;
+    border: none; /* Make the button look like a chip */
   }
 
   .time-period-chip .label {

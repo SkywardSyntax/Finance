@@ -1,23 +1,24 @@
-<script>
-  export let totalIncome;
-  export let budgetedAmount;
-  export let item; 
+<script lang="ts">
+  export let totalIncome: number;
+  export let budgetedAmount: number;
+  export let item: { id: string; x: number; y: number };
   import { dndzone } from 'svelte-dnd-action';
   import { dragging } from './store.js';
-  
+
   $: remainingAmount = totalIncome - budgetedAmount;
-  $: percentage = (remainingAmount / totalIncome) * 100 || 100; 
+  $: percentage = (remainingAmount / totalIncome) * 100 || 100;
   $: deg = (percentage / 100) * 360 - 90;
   $: ringColor = percentage <= 10 ? 'red' : percentage <= 50 ? 'yellow' : 'green';
-  $: amountTextSize = remainingAmount.toString().length > 8
+  $: amountTextSize =
+    remainingAmount.toString().length > 8
       ? '1.5rem'
       : remainingAmount.toString().length > 6
       ? '2rem'
       : '2.5rem';
 
-  const handleDndUpdate = ({ detail }) => {
-    item.x = detail.x; 
-    item.y = detail.y; 
+  const handleDndUpdate = ({ detail }: { detail: { x: number; y: number } }) => {
+    item.x = detail.x;
+    item.y = detail.y;
   };
 </script>
 
@@ -28,13 +29,15 @@
     flipDurationMs: 200,
   }}
   on:dndzone:reorder={handleDndUpdate}
-  style="cursor: {$dragging ? 'grabbing' : 'grab'}" 
+  on:mousedown={() => dragging.set(true)} 
+  on:mouseup={() => dragging.set(false)}
+  style="cursor: {$dragging ? 'grabbing' : 'grab'}"
 >
   <div class="ring-container">
     <div class="budget-info">
       <div class="label">Remaining Budget</div>
       <div class="budget-amount" style="font-size: {amountTextSize}">
-        ${remainingAmount.toFixed(2)} 
+        ${remainingAmount.toFixed(2)}
       </div>
       <div class="income-info">
         <span class="label">Income:</span>
@@ -53,6 +56,7 @@
   </div>
   <div class="label">Budget Categories</div>
   <div class="budget-categories">
+    <!-- Budget categories will go here -->
   </div>
 </div>
 
@@ -63,7 +67,7 @@
     padding: 25px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     width: fit-content;
-    z-index: 1; 
+    z-index: 1;
   }
 
   .ring-container {
@@ -89,11 +93,11 @@
     width: 90%;
     height: 90%;
     border-radius: 50%;
-    background-color: green; 
+    background-color: green;
     z-index: 1;
     transition: background-color 0.5s ease-in-out, transform 0.5s ease-in-out;
     transform-origin: center;
-    transform: rotate(-90deg); 
+    transform: rotate(-90deg);
   }
 
   .pulse-container {

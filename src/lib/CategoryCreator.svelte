@@ -1,17 +1,24 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { dndzone } from 'svelte-dnd-action';
   import { dragging } from './store.js';
 
-  export let isMonthly;
-  export let item; 
+  export let isMonthly: boolean;
+  export let item: { id: string; x: number; y: number };
 
   const dispatch = createEventDispatcher();
 
-  const budgetCategories = {};
-  let budgetCategoriesContainer;
+  interface BudgetCategory {
+    name: string;
+    allocated: number;
+    spent: number;
+    items: { name: string; amount: number }[];
+  }
 
-  const defaultTags = [
+  const budgetCategories: { [key: string]: BudgetCategory } = {};
+  let budgetCategoriesContainer: HTMLDivElement;
+
+  const defaultTags: string[] = [
     'Food',
     'Rent',
     'Utilities',
@@ -25,30 +32,28 @@
 
   let categoryNameInput = '';
   let categoryAmountInput = '';
-  let selectedCategoryButton = null;
+  let selectedCategoryButton: HTMLButtonElement | null = null;
   let customCategoryName = '';
 
-  const handleDndUpdate = ({ detail }) => {
+  const handleDndUpdate = ({ detail }: { detail: { x: number; y: number } }) => {
     item.x = detail.x;
     item.y = detail.y;
   };
 
-  const handleCategoryButtonClick = (categoryName) => {
-    // Deselect previous button 
+  const handleCategoryButtonClick = (categoryName: string) => {
     if (selectedCategoryButton) {
       selectedCategoryButton.classList.remove('selected');
     }
-
-    selectedCategoryButton = event.target;
+    selectedCategoryButton = event.target as HTMLButtonElement;
     selectedCategoryButton.classList.add('selected');
 
     categoryNameInput = categoryName;
     customCategoryName = '';
 
     if (categoryName === 'Other') {
-      document.getElementById('custom-category-field').style.display = 'block';
+      (document.getElementById('custom-category-field') as HTMLDivElement).style.display = 'block';
     } else {
-      document.getElementById('custom-category-field').style.display = 'none';
+      (document.getElementById('custom-category-field') as HTMLDivElement).style.display = 'none';
     }
   };
 
@@ -62,7 +67,7 @@
         categoryAmount *= 12;
       }
 
-      dispatch('updateBudgeted', categoryAmount); 
+      dispatch('updateBudgeted', categoryAmount);
 
       const categoryItem = document.createElement('div');
       categoryItem.classList.add('budget-category');
@@ -72,9 +77,10 @@
       categoryItem.innerHTML = `
         <div class="category-info">
             <span class="name">${categoryName}</span>
-            <span class="amount" data-allocated="${
-              categoryAmount
-            }">$${(categoryAmount / (isMonthly ? 12 : 1)).toFixed(2)}</span>
+            <span class="amount" data-allocated="${categoryAmount}">$${(
+        categoryAmount /
+        (isMonthly ? 12 : 1)
+      ).toFixed(2)}</span>
         </div>
         <div class="category-items" id="items-${categoryItem.id}"></div>
         <button class="add-item-button" data-category="${
@@ -90,13 +96,12 @@
         items: [],
       };
 
-      // Add initial category tag to the category
-      addTagToItem(categoryItem, categoryName); 
+      addTagToItem(categoryItem, categoryName);
 
       const addItemToCategoryButton =
-        categoryItem.querySelector('.add-item-button');
+        categoryItem.querySelector('.add-item-button') as HTMLButtonElement;
       addItemToCategoryButton.addEventListener('click', (event) => {
-        event.stopPropagation(); 
+        event.stopPropagation();
 
         const categoryId = addItemToCategoryButton.dataset.category;
         const category = budgetCategories[categoryId];
@@ -108,7 +113,7 @@
 
         if (itemName && !isNaN(itemAmount) && itemAmount > 0) {
           if (!isMonthly) {
-            itemAmount /= 12; 
+            itemAmount /= 12;
           }
 
           if (category.spent + itemAmount > category.allocated) {
@@ -123,7 +128,7 @@
 
           const categoryItemsContainer = document.getElementById(
             `items-${categoryId}`
-          );
+          ) as HTMLDivElement;
           const budgetItem = document.createElement('div');
           budgetItem.classList.add('budget-item');
           budgetItem.innerHTML = `
@@ -140,10 +145,11 @@
           `;
           categoryItemsContainer.appendChild(budgetItem);
 
-          // Add the category tag to the new item
-          addTagToItem(budgetItem, categoryName); 
+          addTagToItem(budgetItem, categoryName);
 
-          const deleteButton = budgetItem.querySelector('.delete-item');
+          const deleteButton = budgetItem.querySelector(
+            '.delete-item'
+          ) as HTMLButtonElement;
           deleteButton.addEventListener('click', (event) => {
             event.stopPropagation();
 
@@ -158,30 +164,32 @@
 
             budgetItem.remove();
             updateCategoryAmount(categoryId);
-            dispatch('updateBudgeted', -amountToDelete); // Update the budget when an item is deleted
+            dispatch('updateBudgeted', -amountToDelete);
           });
 
-          const addTagsButton = budgetItem.querySelector('.add-tags-button');
+          const addTagsButton = budgetItem.querySelector(
+            '.add-tags-button'
+          ) as HTMLButtonElement;
           addTagsButton.addEventListener('click', (event) => {
-            event.stopPropagation(); 
+            event.stopPropagation();
             const tagSelectionContainer =
-              budgetItem.querySelector('.tags');
+              budgetItem.querySelector('.tags') as HTMLDivElement;
             toggleTagSelection(budgetItem, tagSelectionContainer);
           });
 
           updateCategoryAmount(categoryId);
-          dispatch('updateBudgeted', 0); // Emit an event to update the BudgetRing
+          dispatch('updateBudgeted', 0);
         }
       });
 
       updateCategoryAmount(categoryItem.id);
-      categoryNameInput = ''; 
+      categoryNameInput = '';
       categoryAmountInput = '';
       customCategoryName = '';
     }
   };
 
-  const addTagToItem = (budgetItem, tagText) => {
+  const addTagToItem = (budgetItem: HTMLDivElement, tagText: string) => {
     const tagElement = document.createElement('span');
     tagElement.classList.add('tag');
     tagElement.textContent = tagText;
@@ -189,11 +197,14 @@
       tagElement.remove();
     });
 
-    const tagsContainer = budgetItem.querySelector('.tags');
+    const tagsContainer = budgetItem.querySelector('.tags') as HTMLDivElement;
     tagsContainer.appendChild(tagElement);
   };
 
-  const toggleTagSelection = (parent, tagSelectionContainer) => {
+  const toggleTagSelection = (
+    parent: HTMLDivElement,
+    tagSelectionContainer: HTMLDivElement
+  ) => {
     const tagSelection = document.createElement('div');
     tagSelection.classList.add('tag-selection');
 
@@ -211,11 +222,11 @@
     tagSelection.classList.toggle('show');
   };
 
-  const updateCategoryAmount = (categoryId) => {
+  const updateCategoryAmount = (categoryId: string) => {
     const category = budgetCategories[categoryId];
     const categoryAmountSpan = document.querySelector(
       `#${categoryId} .amount`
-    );
+    ) as HTMLSpanElement;
     const allocatedAmount = parseFloat(categoryAmountSpan.dataset.allocated);
     const displayAmount = isMonthly
       ? allocatedAmount / 12
@@ -228,7 +239,7 @@
 </script>
 
 <div
-  class="budget-card add-category-card" 
+  class="budget-card add-category-card"
   id="add-category-card"
   bind:this={budgetCategoriesContainer}
   use:dndzone={{
@@ -236,6 +247,8 @@
     flipDurationMs: 200,
   }}
   on:dndzone:reorder={handleDndUpdate}
+  on:mousedown={() => dragging.set(true)}
+  on:mouseup={() => dragging.set(false)}
   style="cursor: {$dragging ? 'grabbing' : 'grab'}"
 >
   <h2>Create Budget Categories</h2>
@@ -267,227 +280,5 @@
     Add Category
   </button>
 
-  <!-- This div should be outside the draggable area -->
-  <div class="budget-categories" /> 
+  <div class="budget-categories" />
 </div>
-
-<style>
-  .add-category-card { /* Targets the card specifically */
-    background-color: #202020;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: fit-content;
-    z-index: 1;
-  }
-
-  h2 {
-    color: #eee;
-    margin-bottom: 15px;
-  }
-
-  /* --- Category Selection --- */
-  .category-selection {
-    margin-bottom: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .category-selection button {
-    background-color: #5bc0de;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    width: fit-content;
-    min-width: 80px;
-    transition: background-color 0.2s;
-  }
-
-  .category-selection button.selected {
-    background-color: #31b0d5;
-  }
-
-  .category-selection button:hover {
-    background-color: #46b8da;
-  }
-
-  /* --- Input Fields --- */
-  .input-field {
-    margin-bottom: 10px;
-  }
-
-  input[type='number'],
-  input[type='text'] {
-    width: calc(100% - 16px);
-    padding: 8px;
-    border-radius: 5px;
-    border: 1px solid #555;
-    background-color: #444;
-    color: #eee;
-    margin-bottom: 10px;
-  }
-
-  /* --- Button Styles --- */
-  button {
-    background-color: #4caf50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background-color: #45a049;
-  }
-
-  /* --- Budget Categories --- */
-  .budget-categories {
-    margin-top: 20px;
-  }
-
-  .budget-category {
-    background-color: #333;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 8px;
-    display: flex;
-    flex-direction: column;
-    width: fit-content;
-  }
-
-  .category-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-  }
-
-  .budget-category .name {
-    font-size: 0.9rem;
-    color: #eee;
-  }
-
-  .budget-category .amount {
-    font-size: 0.8rem;
-    color: #ccc;
-  }
-
-  .category-items {
-    margin-top: 10px;
-  }
-
-  /* --- Budget Items --- */
-  .budget-item {
-    background-color: #444;
-    border-radius: 8px;
-    padding: 8px;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: fit-content;
-  }
-
-  .budget-item .name {
-    font-size: 0.8rem;
-    color: #eee;
-  }
-
-  .budget-item .amount {
-    font-size: 0.7rem;
-    color: #ccc;
-  }
-
-  /* --- Add Item Button --- */
-  .add-item-button {
-    background-color: #5cb85c;
-    border: none;
-    color: white;
-    padding: 6px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 0.8rem;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    cursor: pointer;
-    margin-top: 8px;
-    align-self: flex-end;
-  }
-
-  .add-item-button:hover {
-    background-color: #4cae4c;
-  }
-
-  /* --- Tag Styles --- */
-  .tag {
-    background-color: #5bc0de;
-    color: white;
-    padding: 3px 6px;
-    border-radius: 5px;
-    font-size: 0.7rem;
-    cursor: pointer;
-    margin-left: 8px;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  /* --- Delete Button --- */
-  .delete-item {
-    background-color: #f44336;
-    padding: 6px 12px;
-    font-size: 0.8rem;
-    margin-left: 5px; 
-  }
-
-  .delete-item:hover {
-    background-color: #d32f2f;
-  }
-
-  /* --- Tag Selection --- */
-  .tag-selection {
-    display: none;
-    position: absolute;
-    background-color: #202020;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    z-index: 3; 
-    margin-top: 5px;
-  }
-
-  .tag-selection.show {
-    display: block;
-  }
-
-  .tag-selection button {
-    background-color: #5bc0de;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    margin: 5px 0;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    width: calc(100% - 10px);
-    transition: background-color 0.2s;
-  }
-
-  .tag-selection button:hover {
-    background-color: #46b8da;
-  }
-</style>

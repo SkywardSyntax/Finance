@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import BudgetRing from './lib/BudgetRing.svelte';
   import IncomeInput from './lib/IncomeInput.svelte';
   import CategoryCreator from './lib/CategoryCreator.svelte';
   import TimePeriodChip from './lib/TimePeriodChip.svelte';
   import { dragging } from './lib/store.js';
-  
+
   let totalIncome = 0;
   let budgetedAmount = 0;
   let isMonthly = true;
@@ -13,21 +13,15 @@
     { id: 'budget-card', x: 400, y: 50 },
     { id: 'input-card', x: 50, y: 50 },
     { id: 'add-category-card', x: 50, y: 250 },
-    { id: 'time-period-chip', x: '50%', y: 10 },
+    { id: 'time-period-chip', x: 200, y: 10 }, // Changed x to number
   ];
 
-  const updateBudgetedAmount = (newAmount) => {
+  const updateBudgetedAmount = (newAmount: number) => {
     budgetedAmount += newAmount;
   };
 
-  // Function to prevent dragging of child elements
-  const handleMouseDown = (event) => {
-    if (event.target.classList.contains('budget-card') || 
-        event.target.classList.contains('input-card') ||
-        event.target.classList.contains('time-period-chip') ||
-        event.target.classList.contains('add-category-card')) {
-      dragging.set(true);
-    }
+  const handleMouseDown = () => {
+    dragging.set(true);
   };
 
   const handleMouseUp = () => {
@@ -35,7 +29,7 @@
   };
 </script>
 
-<main on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}> 
+<main on:mousedown={handleMouseDown} on:mouseup={handleMouseUp}>
   {#each items as item (item.id)}
     <div style="position: absolute; left: {item.x}px; top: {item.y}px;">
       {#if item.id === 'time-period-chip'}
@@ -45,7 +39,7 @@
       {:else if item.id === 'input-card'}
         <IncomeInput bind:totalIncome {item} />
       {:else if item.id === 'add-category-card'}
-        <CategoryCreator {isMonthly} on:updateBudgeted={updateBudgetedAmount} {item}  />
+        <CategoryCreator {isMonthly} on:updateBudgeted={updateBudgetedAmount} {item} />
       {/if}
     </div>
   {/each}
@@ -53,7 +47,7 @@
 
 <style>
   main {
-    position: relative; 
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
