@@ -17,6 +17,8 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
-    "svelte-dnd-action": "^0.9.49"
+    "svelte-dnd-action": "^0.9.49",
+    "svelte-grid": "^5.1.2",
+    "svelte-grid-layout": "^1.0.3"
   }
 }

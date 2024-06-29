@@ -8,12 +8,3 @@ body {
   background-color: #1a202c; 
   color: #f1f5f9; 
 }
-/* Set heights for child divs */
-.bg-gray-800 {
-  height: 50%;
-}
-
-/* Adjust height for "Add Transaction" chip */
-#budget-input {
-  height: 25%;
-}
