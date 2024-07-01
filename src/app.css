@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,4 +6,51 @@
 body {
   background-color: #1a202c; 
   color: #f1f5f9; 
+}
+
+/* Transaction chip styles */
+.transaction-chip {
+  border-radius: 8px;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+
+.transaction-chip:hover {
+  background-color: red;
+}
+
+.transaction-chip .content {
+  opacity: 1;
+}
+
+.transaction-chip:hover .content {
+  opacity: 0;
+}
+
+/* Trashcan icon styles */
+.delete-icon {
+  display: none;
+}
+
+.transaction-chip:hover .delete-icon {
+  display: block;
+}
+
+/* Tag chip styles */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2e8f0;
+  color: #333;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tag-chip:hover {
+  background-color: #cbd5e1;
+  color: #111827;
 }
