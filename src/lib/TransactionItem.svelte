@@ -47,6 +47,12 @@
     background-color: #2d3748;
     border-radius: 8px;
     margin-bottom: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  .transaction-chip:hover {
+    background-color: #4a5568;
+    transform: scale(1.02);
   }
 
   .left-side {
@@ -55,8 +61,9 @@
   }
 
   .name {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: bold;
+    color: #e2e8f0;
   }
 
   .add-tags {
@@ -65,11 +72,17 @@
     background: none;
     border: none;
     cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .add-tags:hover {
+    color: #4299e1;
   }
 
   .right-side {
     font-size: 1.5rem;
     font-weight: bold;
+    color: #f7fafc;
   }
 
   .popup {
@@ -109,6 +122,12 @@
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .tag-chip:hover {
+    background-color: #cbd5e1;
+    color: #111827;
   }
 
   .popup-buttons {

@@ -6,12 +6,16 @@
 body {
   background-color: #1a202c; 
   color: #f1f5f9; 
+  font-family: 'Roboto', sans-serif; /* Pc191 */
+  line-height: 1.6; /* Pc191 */
 }
 
 /* Transaction chip styles */
 .transaction-chip {
   border-radius: 8px;
   transition: background-color 0.3s, opacity 0.3s;
+  padding: 1rem; /* Pc191 */
+  margin-bottom: 1rem; /* Pc191 */
 }
 
 .transaction-chip:hover {
