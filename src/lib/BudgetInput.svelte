@@ -4,13 +4,16 @@
     const dispatch = createEventDispatcher();
   
     let description = '';
+    let cost = 0;
   
     const handleAdd = () => {
       const transaction = {
-        description
+        description,
+        cost
       };
   
       description = '';
+      cost = 0;
   
       dispatch('add', transaction);
     };
@@ -22,6 +25,12 @@
       type="text"
       placeholder="Description"
       bind:value={description}
+      class="bg-gray-700 text-white rounded-md px-2 py-1 w-full mb-2"
+    />
+    <input
+      type="number"
+      placeholder="Cost"
+      bind:value={cost}
       class="bg-gray-700 text-white rounded-md px-2 py-1 w-full mb-2"
     />
     <button
