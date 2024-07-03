@@ -1,6 +1,7 @@
 <script>
   import BudgetInput from './lib/BudgetInput.svelte';
   import BalanceChip from './lib/BalanceChip.svelte';
+  import TransactionItem from './lib/TransactionItem.svelte';
 
   let transactions = [];
   let annualSalary = 0;
@@ -15,6 +16,14 @@
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
     remainingBalance = annualSalary;
+  };
+
+  // Updated to handle single tag updates
+  const handleUpdateTags = (event) => {
+    const { transactionId, tag } = event.detail;
+    transactions = transactions.map(transaction => 
+      transaction.id === transactionId ? { ...transaction, tag } : transaction
+    );
   };
 </script>
 
@@ -37,7 +46,7 @@
     <h2 class="text-lg font-semibold mb-2">Transactions</h2>
     <ul>
       {#each transactions as transaction}
-        <li>{transaction.description} - ${transaction.cost}</li>
+        <TransactionItem {transaction} on:updateTags={handleUpdateTags} />
       {/each}
     </ul>
   </div>
