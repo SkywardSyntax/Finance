@@ -7,6 +7,8 @@
 
   let showPopup = false;
   let selectedTag = null; // Store the selected tag
+  let isEditingCost = false; // Track if the cost is being edited
+  let editedCost = transaction.cost; // Store the edited cost
 
   const togglePopup = () => {
     showPopup = !showPopup;
@@ -17,6 +19,19 @@
     selectedTag = event.detail.tag; 
     showPopup = false; // Close the popup
     dispatch('updateTags', { transactionId: transaction.id, tag: selectedTag }); 
+  };
+
+  // Handle cost input change
+  const handleCostInput = (event) => {
+    editedCost = parseFloat(event.target.value);
+  };
+
+  // Toggle cost editing
+  const toggleCostEditing = () => {
+    isEditingCost = !isEditingCost;
+    if (!isEditingCost) {
+      dispatch('updateCost', { transactionId: transaction.id, cost: editedCost });
+    }
   };
 </script>
 
@@ -30,7 +45,18 @@
     {/if}
   </div>
   <div class="right-side">
-    <div class="cost">${transaction.cost}</div>
+    {#if isEditingCost}
+      <input
+        type="number"
+        value={editedCost}
+        on:input={handleCostInput}
+        on:blur={toggleCostEditing}
+        class="cost-input"
+        placeholder="Enter Amount Here"
+      />
+    {:else}
+      <div class="cost" on:click={toggleCostEditing}>${transaction.cost}</div>
+    {/if}
   </div>
 </div>
 
@@ -83,6 +109,17 @@
     font-size: 1.5rem;
     font-weight: bold;
     color: #f7fafc;
+  }
+
+  .cost-input {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f7fafc;
+    background-color: #2d3748;
+    border: none;
+    border-bottom: 2px solid #63b3ed;
+    outline: none;
+    width: 100px;
   }
 
   .popup {

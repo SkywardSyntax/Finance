@@ -6,6 +6,7 @@
   let transactions = [];
   let annualSalary = 0;
   let remainingBalance = 0;
+  let showSalaryInput = false;
 
   const handleAddTransaction = (event) => {
     const transaction = event.detail;
@@ -16,6 +17,11 @@
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
     remainingBalance = annualSalary;
+    showSalaryInput = false;
+  };
+
+  const toggleSalaryInput = () => {
+    showSalaryInput = !showSalaryInput;
   };
 
   // Updated to handle single tag updates
@@ -31,13 +37,22 @@
   <h1 class="text-3xl font-extrabold mb-6">Budget Tracker</h1>
 
   <div class="mb-6">
-    <label for="salary" class="block text-sm font-medium text-gray-300">Annual Salary</label>
-    <input
-      type="number"
-      id="salary"
-      on:input={handleSalaryInput}
-      class="bg-gray-700 text-white rounded-md px-3 py-2 w-full"
-    />
+    {#if showSalaryInput}
+      <input
+        type="number"
+        id="salary"
+        on:input={handleSalaryInput}
+        class="bg-gray-700 text-white rounded-md px-3 py-2 w-full"
+        placeholder="Enter Annual Income Here"
+      />
+    {:else}
+      <button
+        on:click={toggleSalaryInput}
+        class="bg-green-500 text-white rounded-full px-4 py-2"
+      >
+        Enter Annual Income Here
+      </button>
+    {/if}
   </div>
 
   <BudgetInput on:add={handleAddTransaction} />
