@@ -1,20 +1,11 @@
-<script lang="ts">
+<script>
   import BudgetInput from './lib/BudgetInput.svelte';
-  import TransactionList from './lib/TransactionList.svelte';
-  import BudgetDisplay from './lib/BudgetDisplay.svelte';
 
-  let balance: number = 0;
-  let transactions: { description: string; amount: number }[] = [];
+  let transactions = [];
 
-  const handleAddTransaction = (event: CustomEvent<{ description: string; amount: number }>) => {
-    const transaction = event.detail; // Access transaction from event.detail
-
-    transactions = [...transactions, transaction]; 
-    updateBalance(transaction.amount);
-  };
-
-  const updateBalance = (amount: number) => {
-    balance += amount;
+  const handleAddTransaction = (event) => {
+    const transaction = event.detail;
+    transactions = [...transactions, transaction];
   };
 </script>
 
@@ -23,8 +14,12 @@
 
   <BudgetInput on:add={handleAddTransaction} />
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-    <BudgetDisplay balance={balance} />
-    <TransactionList transactions={transactions} />
+  <div class="mt-4">
+    <h2 class="text-lg font-semibold mb-2">Transactions</h2>
+    <ul>
+      {#each transactions as transaction}
+        <li>{transaction.description}</li>
+      {/each}
+    </ul>
   </div>
 </main>

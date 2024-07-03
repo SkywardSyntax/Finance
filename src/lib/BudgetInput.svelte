@@ -1,19 +1,16 @@
-<script lang="ts">
+<script>
     import { createEventDispatcher } from 'svelte';
   
     const dispatch = createEventDispatcher();
   
-    let description: string = '';
-    let amount: string = '0';
+    let description = '';
   
     const handleAdd = () => {
       const transaction = {
-        description,
-        amount: parseFloat(amount) || 0
+        description
       };
   
       description = '';
-      amount = '0';
   
       dispatch('add', transaction);
     };
@@ -25,12 +22,6 @@
       type="text"
       placeholder="Description"
       bind:value={description}
-      class="bg-gray-700 text-white rounded-md px-2 py-1 w-full mb-2"
-    />
-    <input
-      type="number"
-      placeholder="Amount"
-      bind:value={amount}
       class="bg-gray-700 text-white rounded-md px-2 py-1 w-full mb-2"
     />
     <button
