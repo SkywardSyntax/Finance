@@ -28,7 +28,7 @@ jobs:
         cache: 'npm'
     - run: npm install -g pnpm
     - run: pnpm install
-    - run: pnpm run build --if-present
+    - run: pnpm run build
     
   deployToPages:
     needs: build
@@ -40,3 +40,4 @@ jobs:
         with:
           branch: main
           folder: dist
+
