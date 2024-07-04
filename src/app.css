@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark mode base styles */
+body {
+  background-color: #1a202c; 
+  color: #f1f5f9; 
+  font-family: 'Roboto', sans-serif; /* Pc191 */
+  line-height: 1.6; /* Pc191 */
+}
+
+/* Transaction chip styles */
+.transaction-chip {
+  border-radius: 8px;
+  transition: background-color 0.3s, opacity 0.3s;
+  padding: 1rem; /* Pc191 */
+  margin-bottom: 1rem; /* Pc191 */
+}
+
+.transaction-chip:hover {
+  background-color: red;
+}
+
+.transaction-chip .content {
+  opacity: 1;
+}
+
+.transaction-chip:hover .content {
+  opacity: 0;
+}
+
+/* Trashcan icon styles */
+.delete-icon {
+  display: none;
+}
+
+.transaction-chip:hover .delete-icon {
+  display: block;
+}
+
+/* Tag chip styles */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2e8f0;
+  color: #333;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tag-chip:hover {
+  background-color: #cbd5e1;
+  color: #111827;
+}
+
+/* Mini transaction chip styles */
+.mini-transaction-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.mini-transaction-chip .left-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-transaction-chip .name {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.mini-transaction-chip .add-tags {
+  font-size: 0.875rem;
+  color: #63b3ed;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.mini-transaction-chip .right-side {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+/* Popup window styles */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 300px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.popup-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popup-buttons button:first-child {
+  background-color: #4caf50;
+  color: white;
+}
+
+.popup-buttons button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+/* Tag chip styles in popup window */
+.popup .tag-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e2e8f0;
+  color: #333;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}

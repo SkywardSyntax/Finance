@@ -1,63 +1,17 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Finance Tracker</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div class="container" id="container">
-
-        <div class="time-period-chip" id="time-period-chip">
-            <div class="draggable-area"></div> <span class="label">Monthly</span> 
-        </div>
-
-        <div class="budget-card" id="budget-card">
-            <div class="draggable-area"></div> 
-            <div class="ring-container">
-                <div class="budget-info">
-                    <div class="label">Remaining Budget</div>
-                    <div class="budget-amount" id="budget-amount">$0.00</div>
-                    <div class="income-info">
-                        <span class="label">Income:</span>
-                        <span class="value" id="income-value">$0.00</span>
-                    </div>
-                </div>
-                <div class="budget-ring">
-                    <div class="pulse-container">
-                        <div class="inner-circle"></div>
-                    </div>
-                    <div class="budget-ring-fill" id="budget-ring-fill"></div>
-                </div>
-            </div>
-            <div class="label">Budget Categories</div>
-            <div class="budget-categories" id="budget-categories-container"></div>
-        </div>
-
-        <div class="input-card" id="input-card">
-            <div class="draggable-area"></div> 
-            <div class="input-content">
-                <h2 id="income-label">Enter Your Monthly Income</h2>
-                <input type="number" id="annual-income" placeholder="E.g., 5000">
-            </div>
-            <button id="set-income">Set Income</button>
-        </div>
-
-        <div class="budget-card" id="add-category-card">
-            <div class="draggable-area"></div> 
-            <h2>Create Budget Categories</h2>
-            <div class="category-selection" id="category-selection"></div>
-            <div class="input-field" id="custom-category-field" style="display: none;">
-                <input type="text" id="category-name" placeholder="Custom Category Name">
-            </div>
-            <div class="input-field">
-                <input type="number" id="category-amount" placeholder="Allocated Amount">
-            </div>
-            <button id="add-category">Add Category</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + Svelte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="description" content="A modern and visually appealing budget tracker application.">
+    <meta name="keywords" content="budget, finance, tracker, modern, visually appealing">
+    <meta name="author" content="SkywardSyntax">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
