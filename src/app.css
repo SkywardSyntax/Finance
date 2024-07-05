@@ -69,6 +69,12 @@ body {
   backdrop-filter: blur(10px);
   border-radius: 8px;
   margin-bottom: 0.5rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.mini-transaction-chip:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
 }
 
 .mini-transaction-chip .left-side {
@@ -87,6 +93,11 @@ body {
   background: none;
   border: none;
   cursor: pointer;
+  transition: color 0.3s;
+}
+
+.mini-transaction-chip .add-tags:hover {
+  color: #4299e1;
 }
 
 .mini-transaction-chip .right-side {
@@ -149,4 +160,62 @@ body {
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
   cursor: pointer;
+}
+
+/* Transaction chip styles */
+.transaction-chip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #2d3748;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.transaction-chip:hover {
+  background-color: #4a5568;
+  transform: scale(1.02);
+}
+
+.transaction-chip .left-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-chip .name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #e2e8f0;
+}
+
+.transaction-chip .add-tags {
+  font-size: 0.875rem;
+  color: #63b3ed;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.transaction-chip .add-tags:hover {
+  color: #4299e1;
+}
+
+.transaction-chip .right-side {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f7fafc;
+}
+
+.transaction-chip .cost-input {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f7fafc;
+  background-color: #2d3748;
+  border: none;
+  border-bottom: 2px solid #63b3ed;
+  outline: none;
+  width: 100px;
 }

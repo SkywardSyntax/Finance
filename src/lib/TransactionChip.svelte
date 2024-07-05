@@ -87,6 +87,12 @@
     backdrop-filter: blur(10px);
     border-radius: 8px;
     margin-bottom: 0.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  .mini-transaction-chip:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
   }
 
   .left-side {
@@ -105,6 +111,11 @@
     background: none;
     border: none;
     cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  .add-tags:hover {
+    color: #4299e1;
   }
 
   .right-side {
@@ -123,6 +134,12 @@
     font-size: 0.875rem;
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .tag-chip:hover {
+    background-color: #cbd5e1;
+    color: #111827;
   }
 
   .cost-input {

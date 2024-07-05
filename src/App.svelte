@@ -67,3 +67,87 @@
 
   <BalanceChip {remainingBalance} />
 </main>
+
+<style>
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: #1a202c;
+    color: #f1f5f9;
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .mb-6 {
+    margin-bottom: 1.5rem;
+  }
+
+  .bg-gray-700 {
+    background-color: #2d3748;
+  }
+
+  .rounded-md {
+    border-radius: 0.375rem;
+  }
+
+  .px-3 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .w-full {
+    width: 100%;
+  }
+
+  .bg-green-500 {
+    background-color: #48bb78;
+  }
+
+  .rounded-full {
+    border-radius: 9999px;
+  }
+
+  .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .mt-6 {
+    margin-top: 1.5rem;
+  }
+
+  .text-xl {
+    font-size: 1.25rem;
+  }
+
+  .font-semibold {
+    font-weight: 600;
+  }
+
+  .mb-4 {
+    margin-bottom: 1rem;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+</style>
