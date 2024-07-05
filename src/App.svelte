@@ -5,28 +5,27 @@
   import InvestmentInput from './lib/InvestmentInput.svelte';
   import PieChart from './lib/PieChart.svelte';
 
-  let transactions = [];
-  let annualSalary = 0;
-  let remainingBalance = 0;
+  // let transactions = [];
+  // let annualSalary = 0;
+  // let remainingBalance = 0;
   let showSalaryInput = false;
   let investmentPercentage = 0;
   let investmentAmount = 0;
-  let nextTransactionId = 1; 
+  let nextTransactionId = 1;
 
-  // Chart data is now managed in App.svelte
-  let chartData = {
-    labels: ['Investments', 'Other'], 
-    datasets: [
-      {
-        data: [0, 100], // Initial data
-        backgroundColor: ['#FF6384', '#36A2EB'],
-        hoverBackgroundColor: ['#FF6384', '#36A2EB']
-      }
-    ]
-  };
+  let transactions = [
+    // Sample Transactions
+    { id: 1, description: "Groceries", cost: 200, tag: 'Food'},
+    { id: 2, description: "Rent", cost: 1000, tag: 'Housing' },
+    { id: 3, description: "Utilities", cost: 150, tag: 'Bills'} 
+  ];
 
+  let annualSalary = 50000; 
+  let remainingBalance = annualSalary;
+
+  // Reactive calculation of pie chart data
   $: calculatedPercentages = calculatePercentages();
-  $: console.log("Transactions Updated:", transactions); 
+  $: console.log("Calculated Percentages:", calculatedPercentages);
 
   const handleAddTransaction = (event) => {
     transactions = [
@@ -37,9 +36,6 @@
       }
     ];
     remainingBalance -= event.detail.cost;
-
-    // Directly modify chartData 
-    chartData.datasets[0].data = [20, 80]; // Example data update 
   };
 
   const handleSalaryInput = (event) => {
@@ -70,16 +66,14 @@
   };
 
   const calculatePercentages = () => {
-    if (annualSalary <= 0 || transactions.length === 0) {
+    if (annualSalary <= 0) {
       return {
-        investmentPercentage: 0,
-        investmentAmount: 0,
+        investmentAmount: investmentAmount,
         tagPercentages: {},
-        otherPercentage: 100 
+        otherAmount: annualSalary - investmentAmount
       };
     }
 
-    const totalIncome = annualSalary;
     const tagAmounts = {};
     let otherAmount = 0;
 
@@ -91,26 +85,20 @@
       }
     });
 
-    const tagPercentages = {};
-    for (const tag in tagAmounts) {
-      tagPercentages[tag] = (tagAmounts[tag] / totalIncome) * 100;
-    }
-
-    const otherPercentage = (otherAmount / totalIncome) * 100;
-
-    console.log("Calculated Percentages:", {
-      investmentPercentage,
-      investmentAmount,
-      tagPercentages,
-      otherPercentage
-    });
-
     return {
-      investmentPercentage,
-      investmentAmount,
-      tagPercentages,
-      otherPercentage
+      investmentAmount: investmentAmount,
+      tagPercentages: tagAmounts,
+      otherAmount: otherAmount
     };
+  };
+  let initialPercentages = {
+    investmentAmount: 10000, // Example Investment Amount
+    tagPercentages: {
+      Food: 4,  
+      Housing: 20,
+      Bills: 3 
+    },
+    otherAmount: 1500 // Example Other Amount
   };
 </script>
 
@@ -151,7 +139,11 @@
   <BalanceChip {remainingBalance} />
 
   {#if annualSalary > 0}
-  <PieChart labels={chartData.labels} datasets={chartData.datasets} /> 
+    <PieChart
+      investmentAmount={initialPercentages.investmentAmount} 
+      tagPercentages={initialPercentages.tagPercentages} 
+      otherAmount={initialPercentages.otherAmount}
+    />
   {/if}
 </main>
 
