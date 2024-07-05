@@ -10,6 +10,7 @@
   let remainingBalance = 0;
   let showSalaryInput = false;
   let investmentPercentage = 0;
+  let investmentAmount = 0;
 
   const handleAddTransaction = (event) => {
     const transaction = event.detail;
@@ -19,7 +20,7 @@
 
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
-    remainingBalance = annualSalary - (annualSalary * investmentPercentage / 100);
+    remainingBalance = annualSalary - investmentAmount;
   };
 
   const toggleSalaryInput = () => {
@@ -35,12 +36,12 @@
 
   const handleSaveInvestment = (event) => {
     investmentPercentage = event.detail.investmentPercentage;
-    remainingBalance = annualSalary - (annualSalary * investmentPercentage / 100);
+    investmentAmount = (annualSalary * investmentPercentage) / 100;
+    remainingBalance = annualSalary - investmentAmount;
   };
 
   const calculatePercentages = () => {
     const totalIncome = annualSalary;
-    const investmentAmount = (annualSalary * investmentPercentage) / 100;
     const tagAmounts = {};
     let otherAmount = 0;
 
@@ -64,6 +65,7 @@
 
     return {
       investmentPercentage,
+      investmentAmount,
       tagPercentages,
       otherPercentage
     };

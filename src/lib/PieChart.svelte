@@ -4,7 +4,7 @@
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
-  export let investmentPercentage;
+  export let investmentAmount;
   export let tagPercentages;
   export let otherPercentage;
 
@@ -12,7 +12,7 @@
     labels: ['Investments', ...Object.keys(tagPercentages), 'Other'],
     datasets: [
       {
-        data: [investmentPercentage, ...Object.values(tagPercentages), otherPercentage],
+        data: [investmentAmount, ...Object.values(tagPercentages), otherPercentage],
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
       }
