@@ -17,7 +17,6 @@
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
     remainingBalance = annualSalary;
-    showSalaryInput = false;
   };
 
   const toggleSalaryInput = () => {
