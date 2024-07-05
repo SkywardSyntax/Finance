@@ -3,7 +3,7 @@
 </script>
 
 <div class="balance-chip">
-  <span>Remaining Balance: ${remainingBalance}</span>
+  <span>Remaining Balance: ${remainingBalance.toFixed(2)}</span>
 </div>
 
 <style>

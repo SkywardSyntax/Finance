@@ -5,23 +5,14 @@
   import InvestmentInput from './lib/InvestmentInput.svelte';
   import PieChart from './lib/PieChart.svelte';
 
-  // let transactions = [];
-  // let annualSalary = 0;
-  // let remainingBalance = 0;
   let showSalaryInput = false;
   let investmentPercentage = 0;
   let investmentAmount = 0;
   let nextTransactionId = 1;
 
-  let transactions = [
-    // Sample Transactions
-    { id: 1, description: "Groceries", cost: 200, tag: 'Food'},
-    { id: 2, description: "Rent", cost: 1000, tag: 'Housing' },
-    { id: 3, description: "Utilities", cost: 150, tag: 'Bills'} 
-  ];
-
-  let annualSalary = 50000; 
-  let remainingBalance = annualSalary;
+  let transactions = [];
+  let annualSalary = 0;
+  let remainingBalance = 0;
 
   // Reactive calculation of pie chart data
   $: calculatedPercentages = calculatePercentages();
@@ -91,15 +82,6 @@
       otherAmount: otherAmount
     };
   };
-  let initialPercentages = {
-    investmentAmount: 10000, // Example Investment Amount
-    tagPercentages: {
-      Food: 4,  
-      Housing: 20,
-      Bills: 3 
-    },
-    otherAmount: 1500 // Example Other Amount
-  };
 </script>
 
 <main class="bg-gray-900 text-white min-h-screen p-4">
@@ -140,9 +122,9 @@
 
   {#if annualSalary > 0}
     <PieChart
-      investmentAmount={initialPercentages.investmentAmount} 
-      tagPercentages={initialPercentages.tagPercentages} 
-      otherAmount={initialPercentages.otherAmount}
+      investmentAmount={calculatedPercentages.investmentAmount}
+      tagPercentages={calculatedPercentages.tagPercentages}
+      otherAmount={calculatedPercentages.otherAmount}
     />
   {/if}
 </main>

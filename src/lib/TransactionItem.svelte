@@ -6,27 +6,42 @@
   const dispatch = createEventDispatcher();
 
   let showPopup = false;
-  let selectedTag = null; // Store the selected tag
-  let isEditingCost = false; // Track if the cost is being edited
-  let editedCost = transaction.cost; // Store the edited cost
+  let tags = [];
+  let customTag = '';
+  let isEditingCost = false;
+  let editedCost = transaction.cost;
 
   const togglePopup = () => {
     showPopup = !showPopup;
   };
 
-  // Handle tag selection from the popup
-  const handleTagSelect = (event) => {
-    selectedTag = event.detail.tag; 
-    showPopup = false; // Close the popup
-    dispatch('updateTags', { transactionId: transaction.id, tag: selectedTag }); 
+  const addTag = (tag) => {
+    if (!tags.includes(tag)) {
+      tags = [...tags, tag];
+    }
   };
 
-  // Handle cost input change
+  const handleCustomTag = () => {
+    if (customTag && !tags.includes(customTag)) {
+      tags = [...tags, customTag];
+      customTag = '';
+    }
+  };
+
+  const handleSubmit = () => {
+    dispatch('updateTags', { transactionId: transaction.id, tags });
+    togglePopup();
+  };
+
+  const handleCancel = () => {
+    togglePopup();
+  };
+
   const handleCostInput = (event) => {
     editedCost = parseFloat(event.target.value);
+    dispatch('updateCost', { transactionId: transaction.id, cost: editedCost });
   };
 
-  // Toggle cost editing
   const toggleCostEditing = () => {
     isEditingCost = !isEditingCost;
     if (!isEditingCost) {
@@ -38,10 +53,12 @@
 <div class="transaction-chip">
   <div class="left-side">
     <div class="name">{transaction.description}</div>
-    {#if selectedTag}
-      <div class="tag-chip">{selectedTag}</div> 
+    {#if tags.length > 0}
+      {#each tags as tag}
+        <div class="tag-chip">{tag}</div>
+      {/each}
     {:else}
-      <button class="add-tags" on:click={togglePopup}>Add tags</button> 
+      <button class="add-tags" on:click={togglePopup}>Add tags</button>
     {/if}
   </div>
   <div class="right-side">
@@ -61,7 +78,7 @@
 </div>
 
 {#if showPopup}
-  <TagPopup on:tagSelect={handleTagSelect} />
+  <TagPopup {tags} on:submit={handleSubmit} on:close={handleCancel} />
 {/if}
 
 <style>
