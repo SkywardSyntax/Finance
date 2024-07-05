@@ -320,3 +320,9 @@ body {
 .budget-input button:hover {
   background-color: #38a169;
 }
+
+/* Pie chart styles */
+.pie-chart-container {
+  max-width: 400px;
+  margin: 0 auto;
+}

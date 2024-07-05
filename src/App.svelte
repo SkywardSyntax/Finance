@@ -3,6 +3,7 @@
   import BalanceChip from './lib/BalanceChip.svelte';
   import TransactionItem from './lib/TransactionItem.svelte';
   import InvestmentInput from './lib/InvestmentInput.svelte';
+  import PieChart from './lib/PieChart.svelte';
 
   let transactions = [];
   let annualSalary = 0;
@@ -35,6 +36,37 @@
   const handleSaveInvestment = (event) => {
     investmentPercentage = event.detail.investmentPercentage;
     remainingBalance = annualSalary - (annualSalary * investmentPercentage / 100);
+  };
+
+  const calculatePercentages = () => {
+    const totalIncome = annualSalary;
+    const investmentAmount = (annualSalary * investmentPercentage) / 100;
+    const tagAmounts = {};
+    let otherAmount = 0;
+
+    transactions.forEach(transaction => {
+      if (transaction.tag) {
+        if (!tagAmounts[transaction.tag]) {
+          tagAmounts[transaction.tag] = 0;
+        }
+        tagAmounts[transaction.tag] += transaction.cost;
+      } else {
+        otherAmount += transaction.cost;
+      }
+    });
+
+    const tagPercentages = {};
+    for (const tag in tagAmounts) {
+      tagPercentages[tag] = (tagAmounts[tag] / totalIncome) * 100;
+    }
+
+    const otherPercentage = (otherAmount / totalIncome) * 100;
+
+    return {
+      investmentPercentage,
+      tagPercentages,
+      otherPercentage
+    };
   };
 </script>
 
@@ -73,6 +105,10 @@
   </div>
 
   <BalanceChip {remainingBalance} />
+
+  {#if annualSalary > 0}
+    <PieChart {...calculatePercentages()} />
+  {/if}
 </main>
 
 <style>
