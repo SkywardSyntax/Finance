@@ -25,6 +25,7 @@
     "svelte-chartjs": "^3.1.5",
     "svelte-dnd-action": "^0.9.49",
     "svelte-grid": "^5.1.2",
-    "svelte-grid-layout": "^1.0.3"
+    "svelte-grid-layout": "^1.0.3",
+    "chart.js": "^3.7.1"
   }
 }
