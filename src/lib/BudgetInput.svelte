@@ -1,23 +1,25 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
-  
-    const dispatch = createEventDispatcher();
-  
-    let description = '';
-    let cost = 0;
-  
-    const handleAdd = () => {
-      const transaction = {
-        description,
-        cost
-      };
-  
-      description = '';
-      cost = 0;
-  
-      dispatch('add', transaction);
+  import { createEventDispatcher } from 'svelte';
+
+  const dispatch = createEventDispatcher();
+
+  let description = '';
+  let cost = 0;
+
+  const handleAdd = () => {
+    const transaction = {
+      description,
+      cost
     };
+
+    description = '';
+    cost = 0;
+
+    console.log("Emitting 'add' event with data:", transaction); // Add this console log 
+    dispatch('add', transaction);
+  };
 </script>
+
   
 <div class="bg-gray-800 p-4 rounded-md">
     <h2 class="text-lg font-semibold mb-2">Add Transaction</h2>

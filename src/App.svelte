@@ -3,7 +3,7 @@
   import BalanceChip from './lib/BalanceChip.svelte';
   import TransactionItem from './lib/TransactionItem.svelte';
   import InvestmentInput from './lib/InvestmentInput.svelte';
-  import PieChart from './lib/PieChart.svelte'; // Make sure this import path is correct
+  import PieChart from './lib/PieChart.svelte';
 
   let transactions = [];
   let annualSalary = 0;
@@ -11,18 +11,41 @@
   let showSalaryInput = false;
   let investmentPercentage = 0;
   let investmentAmount = 0;
+  let nextTransactionId = 1; 
+
+  // Chart data is now managed in App.svelte
+  let chartData = {
+    labels: ['Investments', 'Other'], 
+    datasets: [
+      {
+        data: [0, 100], // Initial data
+        backgroundColor: ['#FF6384', '#36A2EB'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB']
+      }
+    ]
+  };
+
+  $: calculatedPercentages = calculatePercentages();
+  $: console.log("Transactions Updated:", transactions); 
 
   const handleAddTransaction = (event) => {
-    const transaction = event.detail;
-    transactions = [...transactions, transaction];
-    remainingBalance -= transaction.cost;
+    transactions = [
+      ...transactions,
+      {
+        id: nextTransactionId++,
+        ...event.detail
+      }
+    ];
+    remainingBalance -= event.detail.cost;
+
+    // Directly modify chartData 
+    chartData.datasets[0].data = [20, 80]; // Example data update 
   };
 
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
-    // Recalculate remaining balance and investment amount when salary changes
-    calculateInvestmentAmount(); 
-    remainingBalance = annualSalary - investmentAmount; 
+    calculateInvestmentAmount();
+    remainingBalance = annualSalary - investmentAmount;
   };
 
   const toggleSalaryInput = () => {
@@ -31,7 +54,7 @@
 
   const handleUpdateTags = (event) => {
     const { transactionId, tag } = event.detail;
-    transactions = transactions.map(transaction => 
+    transactions = transactions.map(transaction =>
       transaction.id === transactionId ? { ...transaction, tag } : transaction
     );
   };
@@ -39,26 +62,30 @@
   const handleSaveInvestment = (event) => {
     investmentPercentage = event.detail.investmentPercentage;
     calculateInvestmentAmount();
-    remainingBalance = annualSalary - investmentAmount; 
+    remainingBalance = annualSalary - investmentAmount;
   };
 
-  // Function to calculate investment amount
   const calculateInvestmentAmount = () => {
     investmentAmount = (annualSalary * investmentPercentage) / 100;
-  }
+  };
 
-  // Function to calculate percentages for the pie chart
   const calculatePercentages = () => {
-    const totalIncome = annualSalary; 
+    if (annualSalary <= 0 || transactions.length === 0) {
+      return {
+        investmentPercentage: 0,
+        investmentAmount: 0,
+        tagPercentages: {},
+        otherPercentage: 100 
+      };
+    }
+
+    const totalIncome = annualSalary;
     const tagAmounts = {};
     let otherAmount = 0;
 
     transactions.forEach(transaction => {
       if (transaction.tag) {
-        if (!tagAmounts[transaction.tag]) {
-          tagAmounts[transaction.tag] = 0;
-        }
-        tagAmounts[transaction.tag] += transaction.cost;
+        tagAmounts[transaction.tag] = (tagAmounts[transaction.tag] || 0) + transaction.cost;
       } else {
         otherAmount += transaction.cost;
       }
@@ -70,6 +97,13 @@
     }
 
     const otherPercentage = (otherAmount / totalIncome) * 100;
+
+    console.log("Calculated Percentages:", {
+      investmentPercentage,
+      investmentAmount,
+      tagPercentages,
+      otherPercentage
+    });
 
     return {
       investmentPercentage,
@@ -108,7 +142,7 @@
   <div class="mt-6">
     <h2 class="text-xl font-semibold mb-4">Transactions</h2>
     <ul>
-      {#each transactions as transaction (transaction.id)} 
+      {#each transactions as transaction (transaction.id)}
         <TransactionItem {transaction} on:updateTags={handleUpdateTags} />
       {/each}
     </ul>
@@ -116,8 +150,8 @@
 
   <BalanceChip {remainingBalance} />
 
-  {#if annualSalary > 0} 
-    <PieChart {...calculatePercentages()} /> 
+  {#if annualSalary > 0}
+  <PieChart labels={chartData.labels} datasets={chartData.datasets} /> 
   {/if}
 </main>
 
