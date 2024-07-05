@@ -3,7 +3,7 @@
   import BalanceChip from './lib/BalanceChip.svelte';
   import TransactionItem from './lib/TransactionItem.svelte';
   import InvestmentInput from './lib/InvestmentInput.svelte';
-  import PieChart from './lib/PieChart.svelte';
+  import PieChart from './lib/PieChart.svelte'; // Make sure this import path is correct
 
   let transactions = [];
   let annualSalary = 0;
@@ -20,7 +20,9 @@
 
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
-    remainingBalance = annualSalary - investmentAmount;
+    // Recalculate remaining balance and investment amount when salary changes
+    calculateInvestmentAmount(); 
+    remainingBalance = annualSalary - investmentAmount; 
   };
 
   const toggleSalaryInput = () => {
@@ -36,12 +38,18 @@
 
   const handleSaveInvestment = (event) => {
     investmentPercentage = event.detail.investmentPercentage;
-    investmentAmount = (annualSalary * investmentPercentage) / 100;
-    remainingBalance = annualSalary - investmentAmount;
+    calculateInvestmentAmount();
+    remainingBalance = annualSalary - investmentAmount; 
   };
 
+  // Function to calculate investment amount
+  const calculateInvestmentAmount = () => {
+    investmentAmount = (annualSalary * investmentPercentage) / 100;
+  }
+
+  // Function to calculate percentages for the pie chart
   const calculatePercentages = () => {
-    const totalIncome = annualSalary;
+    const totalIncome = annualSalary; 
     const tagAmounts = {};
     let otherAmount = 0;
 
@@ -100,7 +108,7 @@
   <div class="mt-6">
     <h2 class="text-xl font-semibold mb-4">Transactions</h2>
     <ul>
-      {#each transactions as transaction}
+      {#each transactions as transaction (transaction.id)} 
         <TransactionItem {transaction} on:updateTags={handleUpdateTags} />
       {/each}
     </ul>
@@ -108,8 +116,8 @@
 
   <BalanceChip {remainingBalance} />
 
-  {#if annualSalary > 0}
-    <PieChart {...calculatePercentages()} />
+  {#if annualSalary > 0} 
+    <PieChart {...calculatePercentages()} /> 
   {/if}
 </main>
 
