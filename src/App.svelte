@@ -2,11 +2,13 @@
   import BudgetInput from './lib/BudgetInput.svelte';
   import BalanceChip from './lib/BalanceChip.svelte';
   import TransactionItem from './lib/TransactionItem.svelte';
+  import InvestmentInput from './lib/InvestmentInput.svelte';
 
   let transactions = [];
   let annualSalary = 0;
   let remainingBalance = 0;
   let showSalaryInput = false;
+  let investmentPercentage = 0;
 
   const handleAddTransaction = (event) => {
     const transaction = event.detail;
@@ -16,19 +18,23 @@
 
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
-    remainingBalance = annualSalary;
+    remainingBalance = annualSalary - (annualSalary * investmentPercentage / 100);
   };
 
   const toggleSalaryInput = () => {
     showSalaryInput = !showSalaryInput;
   };
 
-  // Updated to handle single tag updates
   const handleUpdateTags = (event) => {
     const { transactionId, tag } = event.detail;
     transactions = transactions.map(transaction => 
       transaction.id === transactionId ? { ...transaction, tag } : transaction
     );
+  };
+
+  const handleSaveInvestment = (event) => {
+    investmentPercentage = event.detail.investmentPercentage;
+    remainingBalance = annualSalary - (annualSalary * investmentPercentage / 100);
   };
 </script>
 
@@ -44,6 +50,7 @@
         class="bg-gray-700 text-white rounded-md px-3 py-2 w-full"
         placeholder="Enter Annual Income Here"
       />
+      <InvestmentInput on:save={handleSaveInvestment} />
     {:else}
       <button
         on:click={toggleSalaryInput}
