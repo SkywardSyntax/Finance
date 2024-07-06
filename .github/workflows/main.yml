@@ -1,57 +1,27 @@
-name: Deploy to GitHub Pages
+name: CI
 
 on:
   push:
-    branches:
-      - main
-
-permissions:
-  contents: write
+    branches: [ main ]
 
 jobs:
+
   build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18]
-
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      
+    - uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+    - name: Stop Gunicorn server and screen session
+      run: |
+        # Send SIGTERM to all processes in the screen session
+        sudo screen -S finance -X stuff $'\003'  # Ctrl+C
+        sudo screen -S finance -X stuff $'\003'  # Ctrl+C (again to ensure termination)
+        sleep 5  # Wait for processes to terminate gracefully
+        # Forcefully kill the screen session if it still exists
+        sudo screen -XS finance quit || true 
 
-      - run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm run build
-      - run: mv dist/assets/*.css dist/assets/styles.css
-      - run: mv dist/assets/*.js dist/assets/script.js
-      - run: find dist -name "*.html" -exec sh -c 'echo "<!doctype html>
-              <html lang=\"en\">
-                <head>
-                  <meta charset=\"UTF-8\" />
-                  <link rel=\"icon\" type=\"image/svg+xml\" href=\"/vite.svg\" />
-                  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />
-                  <title>Vite + Svelte</title>
-                  <link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap\" rel=\"stylesheet\">
-                  <meta name=\"description\" content=\"A modern and visually appealing budget tracker application.\">
-                  <meta name=\"keywords\" content=\"budget, finance, tracker, modern, visually appealing\">
-                  <meta name=\"author\" content=\"SkywardSyntax\">
-                  <script src=\"/assets/script.js\"></script>
-                  <link rel=\"stylesheet\" href=\"/assets/styles.css\">
-                </head>
-                <body>
-                  <div id=\"app\"></div>
-                </body>
-              </html>" > {}' \;
-
-
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+    - name: Start Gunicorn server in a new screen
+      run: |
+        cd $GITHUB_WORKSPACE
+        sudo screen -dmS finance sudo npm run dev -- --port=80
