@@ -5,34 +5,26 @@
   import InvestmentInput from './lib/InvestmentInput.svelte';
   import PieChart from './lib/PieChart.svelte';
 
-  let showSalaryInput = false;
-  let investmentPercentage = 0;
-  let investmentAmount = 0;
-  let nextTransactionId = 1;
-
   let transactions = [];
   let annualSalary = 0;
   let remainingBalance = 0;
+  let showSalaryInput = false;
+  let investmentPercentage = 0;
+  let showPieChart = false;
 
-  // Reactive calculation of pie chart data
-  $: calculatedPercentages = calculatePercentages();
-  $: console.log("Calculated Percentages:", calculatedPercentages);
+  $: chartData = calculatePercentages(); 
 
   const handleAddTransaction = (event) => {
-    transactions = [
-      ...transactions,
-      {
-        id: nextTransactionId++,
-        ...event.detail
-      }
-    ];
-    remainingBalance -= event.detail.cost;
+    const transaction = event.detail;
+    transactions = [...transactions, { ...transaction, tag: 'Other', id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) }];
+    remainingBalance = annualSalary * (1 - investmentPercentage / 100) - transactions.reduce((sum, t) => sum + t.cost, 0);
+    chartData = calculatePercentages();
   };
 
   const handleSalaryInput = (event) => {
     annualSalary = parseFloat(event.target.value);
-    calculateInvestmentAmount();
-    remainingBalance = annualSalary - investmentAmount;
+    remainingBalance = annualSalary * (1 - investmentPercentage / 100) - transactions.reduce((sum, t) => sum + t.cost, 0); 
+    chartData = calculatePercentages(); 
   };
 
   const toggleSalaryInput = () => {
@@ -44,44 +36,58 @@
     transactions = transactions.map(transaction =>
       transaction.id === transactionId ? { ...transaction, tag } : transaction
     );
+    chartData = calculatePercentages();
   };
+
 
   const handleSaveInvestment = (event) => {
     investmentPercentage = event.detail.investmentPercentage;
-    calculateInvestmentAmount();
-    remainingBalance = annualSalary - investmentAmount;
-  };
-
-  const calculateInvestmentAmount = () => {
-    investmentAmount = (annualSalary * investmentPercentage) / 100;
+    showPieChart = true;
+    remainingBalance = annualSalary * (1 - investmentPercentage / 100) - transactions.reduce((sum, t) => sum + t.cost, 0);
+    chartData = calculatePercentages();
   };
 
   const calculatePercentages = () => {
-    if (annualSalary <= 0) {
-      return {
-        investmentAmount: investmentAmount,
-        tagPercentages: {},
-        otherAmount: annualSalary - investmentAmount
-      };
-    }
-
-    const tagAmounts = {};
-    let otherAmount = 0;
+    const tagAmounts = { Other: 0 };
 
     transactions.forEach(transaction => {
-      if (transaction.tag) {
-        tagAmounts[transaction.tag] = (tagAmounts[transaction.tag] || 0) + transaction.cost;
-      } else {
-        otherAmount += transaction.cost;
+      if (!tagAmounts[transaction.tag]) {
+        tagAmounts[transaction.tag] = 0;
       }
+      tagAmounts[transaction.tag] += transaction.cost;
     });
 
-    return {
-      investmentAmount: investmentAmount,
-      tagPercentages: tagAmounts,
-      otherAmount: otherAmount
+    // Calculate the total spent across all tags
+    const totalSpent = Object.values(tagAmounts).reduce((sum, val) => sum + val, 0);
+
+    // Calculate Remaining Income
+    const remainingIncome = annualSalary - (annualSalary * (investmentPercentage / 100)) - totalSpent;
+
+    const data = {
+      labels: ['Investment', ...Object.keys(tagAmounts), 'Remaining Income'], 
+      datasets: [{
+        data: [
+          annualSalary * (investmentPercentage / 100), 
+          ...Object.values(tagAmounts), 
+          remainingIncome 
+        ],
+        backgroundColor: [
+          '#22c55e', // Green for Investment
+          '#ef4444', // Red for Other 
+          '#3b82f6', // Blue for Remaining Income
+          '#8b5cf6',
+          '#a855f7',
+          '#0ea5e9',
+          '#f97316', 
+          '#f59e0b', 
+          '#eab308', 
+        ],
+      }],
     };
-  };
+
+      return data;
+    };
+
 </script>
 
 <main class="bg-gray-900 text-white min-h-screen p-4">
@@ -112,20 +118,23 @@
   <div class="mt-6">
     <h2 class="text-xl font-semibold mb-4">Transactions</h2>
     <ul>
-      {#each transactions as transaction (transaction.id)}
-        <TransactionItem {transaction} on:updateTags={handleUpdateTags} />
+      {#each transactions as transaction (transaction.id)} 
+        <TransactionItem {transaction} on:updateTags={handleUpdateTags} on:updateCost={(event) => {
+          const { cost } = event.detail;
+          transaction.cost = cost; 
+          remainingBalance = annualSalary - transactions.reduce((sum, t) => sum + t.cost, 0); 
+          chartData = calculatePercentages(); 
+        }}/>
       {/each}
     </ul>
   </div>
 
   <BalanceChip {remainingBalance} />
 
-  {#if annualSalary > 0}
-    <PieChart
-      investmentAmount={calculatedPercentages.investmentAmount}
-      tagPercentages={calculatedPercentages.tagPercentages}
-      otherAmount={calculatedPercentages.otherAmount}
-    />
+  {#if showPieChart} 
+    <div class="chart-container">
+      <PieChart data={chartData} /> 
+    </div>
   {/if}
 </main>
 
@@ -210,5 +219,10 @@
   ul {
     list-style-type: none;
     padding: 0;
+  }
+
+  .chart-container {
+    width: 400px;
+    height: 400px;
   }
 </style>

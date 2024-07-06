@@ -3,7 +3,6 @@
 
   const dispatch = createEventDispatcher();
 
-  // Function to emit the tagSelect event
   const selectTag = (tag) => {
     dispatch('tagSelect', { tag });
   };
@@ -11,14 +10,17 @@
 
 <div class="popup">
   <div class="popup-content">
-    <h3>Add Tags</h3>
+    <h3>Select Tag</h3>
     <div class="tags">
       <div class="tag-chip" on:click={() => selectTag('Food')}>Food</div>
       <div class="tag-chip" on:click={() => selectTag('Transport')}>Transport</div>
-      <div class="tag-chip" on:click={() => selectTag('Other')}>Other</div>
+      <div class="tag-chip" on:click={() => selectTag('Rent')}>Rent</div>
+      <div class="tag-chip" on:click={() => selectTag('Utilities')}>Utilities</div>
+      <div class="tag-chip" on:click={() => selectTag('Other')}>Other</div> 
     </div>
   </div>
 </div>
+
 
 <style>
   .popup {
@@ -31,6 +33,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 100;
   }
 
   .popup-content {
@@ -58,22 +61,11 @@
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
     cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
   }
 
-  .popup-buttons {
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .popup-buttons button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  .popup-buttons button:last-child {
-    background-color: #f44336;
-    color: white;
+  .tag-chip:hover {
+    background-color: #cbd5e1;
+    color: #111827;
   }
 </style>

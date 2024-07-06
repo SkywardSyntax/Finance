@@ -6,8 +6,6 @@
   const dispatch = createEventDispatcher();
 
   let showPopup = false;
-  let tags = [];
-  let customTag = '';
   let isEditingCost = false;
   let editedCost = transaction.cost;
 
@@ -15,31 +13,14 @@
     showPopup = !showPopup;
   };
 
-  const addTag = (tag) => {
-    if (!tags.includes(tag)) {
-      tags = [...tags, tag];
-    }
-  };
-
-  const handleCustomTag = () => {
-    if (customTag && !tags.includes(customTag)) {
-      tags = [...tags, customTag];
-      customTag = '';
-    }
-  };
-
-  const handleSubmit = () => {
-    dispatch('updateTags', { transactionId: transaction.id, tags });
-    togglePopup();
-  };
-
-  const handleCancel = () => {
-    togglePopup();
+  const handleTagSelect = (event) => {
+    const selectedTag = event.detail.tag;
+    dispatch('updateTags', { transactionId: transaction.id, tag: selectedTag });
+    showPopup = false;
   };
 
   const handleCostInput = (event) => {
     editedCost = parseFloat(event.target.value);
-    dispatch('updateCost', { transactionId: transaction.id, cost: editedCost });
   };
 
   const toggleCostEditing = () => {
@@ -53,13 +34,13 @@
 <div class="transaction-chip">
   <div class="left-side">
     <div class="name">{transaction.description}</div>
-    {#if tags.length > 0}
-      {#each tags as tag}
-        <div class="tag-chip">{tag}</div>
-      {/each}
-    {:else}
-      <button class="add-tags" on:click={togglePopup}>Add tags</button>
-    {/if}
+    <div class="tag-container">
+      {#if transaction.tag}
+        <div class="tag-chip" on:click={togglePopup}>{transaction.tag}</div>
+      {:else}
+        <button class="add-tags" on:click={togglePopup}>Add tag</button>
+      {/if}
+    </div>
   </div>
   <div class="right-side">
     {#if isEditingCost}
@@ -75,14 +56,14 @@
       <div class="cost" on:click={toggleCostEditing}>${transaction.cost}</div>
     {/if}
   </div>
+
+  {#if showPopup}
+    <TagPopup on:tagSelect={handleTagSelect} />
+  {/if}
 </div>
 
-{#if showPopup}
-  <TagPopup {tags} on:submit={handleSubmit} on:close={handleCancel} />
-{/if}
-
 <style>
-  .transaction-chip {
+.transaction-chip {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -92,23 +73,28 @@
     margin-bottom: 0.5rem;
     transition: background-color 0.3s, transform 0.3s;
   }
-
+  
   .transaction-chip:hover {
     background-color: #4a5568;
     transform: scale(1.02);
   }
-
+  
   .left-side {
     display: flex;
     flex-direction: column;
   }
-
+  
   .name {
     font-size: 1.1rem;
     font-weight: bold;
     color: #e2e8f0;
   }
 
+  .tag-container {
+    display: flex;
+    align-items: center;
+  }
+  
   .add-tags {
     font-size: 0.875rem;
     color: #63b3ed;
@@ -117,51 +103,15 @@
     cursor: pointer;
     transition: color 0.3s;
   }
-
+  
   .add-tags:hover {
     color: #4299e1;
   }
-
+  
   .right-side {
     font-size: 1.5rem;
     font-weight: bold;
     color: #f7fafc;
-  }
-
-  .cost-input {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #f7fafc;
-    background-color: #2d3748;
-    border: none;
-    border-bottom: 2px solid #63b3ed;
-    outline: none;
-    width: 100px;
-  }
-
-  .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .popup-content {
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: 8px;
-    width: 300px;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
   }
 
   .tag-chip {
@@ -178,29 +128,65 @@
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
   }
-
+  
   .tag-chip:hover {
     background-color: #cbd5e1;
     color: #111827;
+  }
+  
+  .cost-input {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f7fafc;
+    background-color: #2d3748;
+    border: none;
+    border-bottom: 2px solid #63b3ed;
+    outline: none;
+    width: 100px;
+  }
+  
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-content {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    width: 300px;
+  }
+  
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
   }
 
   .popup-buttons {
     display: flex;
     justify-content: space-between;
   }
-
+  
   .popup-buttons button {
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
   }
-
+  
   .popup-buttons button:first-child {
     background-color: #4caf50;
     color: white;
   }
-
+  
   .popup-buttons button:last-child {
     background-color: #f44336;
     color: white;
