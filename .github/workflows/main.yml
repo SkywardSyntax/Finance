@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-      
+
     - uses: actions/checkout@v4
 
     - name: Stop Gunicorn server and screen session
@@ -25,3 +25,4 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         sudo screen -dmS finance sudo npm run dev -- --port=80
+        
