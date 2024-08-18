@@ -45,3 +45,19 @@ If you have state that's important to retain within a component, consider creati
 import { writable } from 'svelte/store'
 export default writable(0)
 ```
+
+## Running the Svelte App
+
+To run the Svelte app, follow these steps:
+
+1. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+2. Run the app:
+   ```sh
+   npm run dev
+   ```
+
+This will start the development server and you can view the app in your browser at `http://localhost:3000`.
