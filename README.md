@@ -61,3 +61,11 @@ To run the Svelte app, follow these steps:
    ```
 
 This will start the development server and you can view the app in your browser at `http://localhost:3000`.
+
+## Demo
+
+Below is a demo image of the application in action:
+
+![Demo Image](demo.png)
+
+The image above shows the main interface of the application, demonstrating its features and functionality.
